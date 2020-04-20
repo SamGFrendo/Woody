@@ -4,7 +4,7 @@
 var N_SIZE = 3,
 EMPTY = "&nbsp;",
 boxes = [],
-turn = "X",
+turn = "X", // concept of 'turn' (e.g. 'X', 'O') has been removed
 score,
 moves;
 
@@ -26,15 +26,10 @@ function init() {
             cell.setAttribute('align', 'center');
             cell.setAttribute('valign', 'center');
             cell.classList.add('col' + j,'row' + i);
-                if (i == j) {
-                    cell.classList.add('diagonal0');
-                }
-                if (j == N_SIZE - i - 1) {
-                    cell.classList.add('diagonal1');
-                }
+
             cell.addEventListener("click", set);
             row.appendChild(cell);
-            boxes.push(cell);
+            boxes.push(cell); // I'm not sure why I need to push cell to the boxes array here
         }
     }
     document.getElementById("tictactoe").appendChild(board);
@@ -45,8 +40,7 @@ function init() {
 
 function startNewGame() {
     moves = 0;
-    turn = "X";
-    //The forEach() method executes a provided function once for each array element.
+
     boxes.forEach(function (square) {
         square.innerHTML = EMPTY;
     });
@@ -73,7 +67,7 @@ function contains(selector, text) {
  
 }
 
-// ************** Sets clicked cell, updates moves and checks the win criteria 
+// ******* Sets clicked cell, updates moves and checks the win criteria 
 
 function set() {
     if (this.innerHTML !== EMPTY) { //If the cell is already filled in, don't do anything
@@ -83,14 +77,11 @@ function set() {
     moves += 1;
     // Win function returns true or false - it determines win criteria based on the cell clicked
     if (win(this)) {
-        alert('Winner: Player ' + turn);
+        alert('Winner: Player ' + turn); // Concept of winner will be removed later
         startNewGame();
     } else if (moves === N_SIZE * N_SIZE) {
         alert("Draw");
         startNewGame();
-    } else {
-        turn = turn === "X" ? "O" : "X";
-        document.getElementById('turn').textContent = 'Player ' + turn;
     }
 }
 
