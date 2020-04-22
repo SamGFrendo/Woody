@@ -35,39 +35,45 @@ The code included some red herrings that made it a little bit harder to unpick. 
 
 1. The first thing I did was remove the concept of turns (e.g. 'X' and 'O'). Woody is not a turn based game, so we're not going to need them. 
 
-2. The second thing I did was remove the concept of diagonals. In Woody, only columns and rows are important. 
+2. The next thing I did was remove the concept of diagonals. In Woody, only columns and rows are important. 
+
+3. Then I made the grid 5x5. While this isn't as large as the 10x10 grid used in Woody, it will allow me to add the largest object used in woody to the grid (the 5xsquare column, or row). 
+
+4. Next up - a completed row or column shouldn't result in a win - it should clear that row or column... and add to the score. To do this I modified the win() function and changed its name to clear(). 
+
 **************************************************************************************************************
 
 to do... 
 
-2. Remove the concept of diagonals 
-3. make the grid 5x5 - This will be simple to do - just update the variable. This will allows us to start testing woody object...
-    The problem is I can't get these to be the correct height when I do this! 
-4. make it so a horrizontal or vertical row dissapears 
+5. The problem I have now is that this approach doesn't deal with the loss of multiple columns at the same time!! <-- This is going to be tricky to resolve!!! 
+
+6. I should add function descriptions to all of the functions
 
 (It would be nice to be able to place the marker before the alert that tells you what has happened...)
 
 Things to find out a little more about... 
-1. Find out more detail about the 'this' keyword in functions
+1. The 'this' keyword in functions
+2. [].filter
+3. 
 
 
 I should think about how to create the different shaped block objects 
 Woody objects 
 
-blocks
+block objects. 
 
-X
+X - 1x1 square
 
+XX - 2x2 square
 XX
-XX
 
-XXX
+XXX - 3x3 square
 XXX
 XXX
 
 Rows... 
 
-XX
+XX 2x1 row 
 
 XXX
 
@@ -77,7 +83,7 @@ XXXXX
 
 columns...
 
-X
+X 1x2 column
 X
 
 X

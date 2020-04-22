@@ -7,7 +7,8 @@ table {
 td {
 	background-color: black;
 	border: 3px solid white;
-	font-size:80px;
+	/* As I change cell size, I need to modify font size, I think it is roughly 20px less */
+	font-size:60px; 
 	color:#ffffff;
 	border-radius: 10px 10px 10px 10px;
 }
