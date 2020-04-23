@@ -39,13 +39,15 @@ The code included some red herrings that made it a little bit harder to unpick. 
 
 3. Then I made the grid 5x5. While this isn't as large as the 10x10 grid used in Woody, it will allow me to add the largest object used in woody to the grid (the 5xsquare column, or row). 
 
-4. Next up - a completed row or column shouldn't result in a win - it should clear that row or column... and add to the score. To do this I modified the win() function and changed its name to clear(). 
+4. Next up - a completed row or column shouldn't result in a win - it should clear that row or column... and add to the score. To do this I modified the win() function and changed its name to clear(). I needed to modify the approach to the clear() function so that a column AND and a row would be cleared if the criteria was met for each of them. 
 
 **************************************************************************************************************
 
 to do... 
 
-5. The problem I have now is that this approach doesn't deal with the loss of multiple columns at the same time!! <-- This is going to be tricky to resolve!!! 
+5. Start adding objects of different types! 
+- How am I going to store the objects - Do it in a different module
+- How am I going to 'place' the objects
 
 6. I should add function descriptions to all of the functions
 

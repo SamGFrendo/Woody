@@ -41,33 +41,37 @@ function init() {
 // New game ************** Sets the 'start' state of the initiliased board
 
 function startNewGame() {
-    moves = 0;
+    moves = 0; // I don't need moves
     score = 0;
     boxes.forEach(function (square) {
         square.innerHTML = EMPTY;
     });
 }
 
-// ******** Check if rows or columns should be cleared criteria is met **************
-// This currently doesn't work for multiple rows and columns being cleared at the same time!! 
+// ******** Check if columns and/or rows should be cleared criteria is met **************
+
 function clear(clicked) {
-    var memberOf = clicked.className.split(/\s+/);
-    for (var i = 0; i < memberOf.length; i++) {
-        var testClass = '.' + memberOf[i];        
-        var items = contains('#tictactoe ' + testClass, turn);
-        console.log(items)
-        // winning condition: turn == N_SIZE
-        if (items.length == N_SIZE) {
-            // If this is true, this is where we want to clear... 
-            // items is an array, that contains the location of each of the boxes to clear
-            // We need to loop through each element inside items and set the innerHTML to EMPTY for each of them
-            items.forEach(function (square) {
-                square.innerHTML = EMPTY;
-            });
-            score += N_SIZE
-        }
+    // The column/row of the clicked cell
+    var memberOfColumn = clicked.className.split(/\s+/)[0];
+    var memberOfRow = clicked.className.split(/\s+/)[1];
+    // The set of cells in the clicked column/row that have an X marker
+    var itemsColumn = contains('.' + memberOfColumn, turn); 
+    var itemsRow = contains('.' + memberOfRow, turn); 
+
+    if (itemsColumn.length == N_SIZE) {
+        itemsColumn.forEach(function (square) {
+            square.innerHTML = EMPTY;
+        });
+        score += N_SIZE;
     }
-    return false;
+
+    if (itemsRow.length == N_SIZE) {
+        itemsRow.forEach(function (square) {
+            square.innerHTML = EMPTY; 
+        });
+        score += N_SIZE;
+    }
+    return;
 }
 
 function contains(selector, text) {
@@ -77,30 +81,19 @@ function contains(selector, text) {
  
 }
 
-
-
 // ******* Sets clicked cell, updates moves and checks the win criteria 
 
 function set() {
     if (this.innerHTML !== EMPTY) { //If the cell is already filled in, don't do anything
         return;
     }
-    this.innerHTML = turn; // This sets the textContent? Used in clear criteria? 
-    moves += 1;
+    this.innerHTML = turn; // This sets the textContent? Used in contains() function? 
+    moves += 1; // I don't need moves
     score += 1;
     
     clear(this);
-
-    // I should rework this if statement - as actually all I from it is the need to ability to iterate the score
-    if (clear(this)) { // clear() no longer returns true 
-        alert('Winner: Player ' + turn); 
-        startNewGame(); // Also I won't need to start new game when I win in future 
-    } else if (moves === N_SIZE * N_SIZE) { // I need to remove the concept of draw... 
-        alert("Draw");
-        startNewGame();
-    } else {
-        document.getElementById('score').textContent = 'Score = ' + score; // Why don't we use innerHTML, instead of text content?
-    }
+    
+    document.getElementById('score').textContent = 'Score = ' + score; // Why don't we use innerHTML, instead of text content?
     
 }
 
