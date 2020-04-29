@@ -41,74 +41,30 @@ The code included some red herrings that made it a little bit harder to unpick. 
 
 4. Next up - a completed row or column shouldn't result in a win - it should clear that row or column... and add to the score. To do this I modified the win() function and changed its name to clear(). I needed to modify the approach to the clear() function so that a column AND and a row would be cleared if the criteria was met for each of them. 
 
+I ran into an issue with the first draft of the clear() function. I hardcode the set() function to be able to set two cells at the same time. This showed that the clear() function would only clear one column, if two columns were completed at the same time
+
 **************************************************************************************************************
 
 to do... 
 
 5. Start adding objects of different types! 
-- How am I going to store the objects - Do it in a different module
-- How am I going to 'place' the objects
+- How am I going to store the blocks - Do it in a different file. These will be variables that are 2D arrays
+- How am I going to 'place' the objects <---- This is going to be super difficult! 
+
+I need to think about the set() function - I have the cell clicked, and I need to modify it so it adds more than one thing - first I can just hard code it to add more than one thing. 
+
 
 6. I should add function descriptions to all of the functions
+
+7. I should probably move
 
 (It would be nice to be able to place the marker before the alert that tells you what has happened...)
 
 Things to find out a little more about... 
 1. The 'this' keyword in functions
 2. [].filter
-3. 
+3. Splitting code across multipe files 
+4. Different between innerHTML and textContent 
 
 
-I should think about how to create the different shaped block objects 
-Woody objects 
-
-block objects. 
-
-X - 1x1 square
-
-XX - 2x2 square
-XX
-
-XXX - 3x3 square
-XXX
-XXX
-
-Rows... 
-
-XX 2x1 row 
-
-XXX
-
-XXXX
-
-XXXXX
-
-columns...
-
-X 1x2 column
-X
-
-X
-X
-X
-
-X
-X
-X
-
-l-shapes... 
-
-X
-XX
-
-X
-X
-XXXX
-
-XX
- X
-
-XXX
-  X
-  x
 

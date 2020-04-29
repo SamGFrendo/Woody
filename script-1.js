@@ -5,15 +5,12 @@
 var N_SIZE = 5, // I don't know why these are capitalised...? 
 EMPTY = "&nbsp;", // I don't know why these are capitalised...? 
 boxes = [],
-marker = "X", // Concept of 'marker' (e.g. 'X', 'O') has been removed
+turn = "X", // Concept of 'turn' (e.g. 'X', 'O') has been removed
 score, // 'score' and 'moves' set in startNewGame() - Not sure if this is the best approach?
 moves; // 'score' and 'moves' set in startNewGame() - Not sure if this is the best approach?
 
-//console.log(squareOne)
-//console.log(squareTwo)
+
 // ************** Initialises the board in the UI and calls StartNewGame.
-
-
 
 function init() {
 
@@ -58,9 +55,8 @@ function clear(clicked) {
     var memberOfColumn = clicked.className.split(/\s+/)[0];
     var memberOfRow = clicked.className.split(/\s+/)[1];
     // The set of cells in the clicked column/row that have an X marker
-    var itemsColumn = contains('.' + memberOfColumn, marker); 
-    var itemsRow = contains('.' + memberOfRow, marker); 
-    
+    var itemsColumn = contains('.' + memberOfColumn, turn); 
+    var itemsRow = contains('.' + memberOfRow, turn); 
 
     if (itemsColumn.length == N_SIZE) {
         itemsColumn.forEach(function (square) {
@@ -68,16 +64,18 @@ function clear(clicked) {
         });
         score += N_SIZE;
     }
+
     if (itemsRow.length == N_SIZE) {
         itemsRow.forEach(function (square) {
             square.innerHTML = EMPTY; 
         });
         score += N_SIZE;
     }
-    return; // Not sure I need return here
+    return;
 }
 
 function contains(selector, text) {
+    // What is querySelectAll doing - selector is id _space_ .Class
     var elements = document.querySelectorAll(selector);
     return [].filter.call(elements, function(element){return RegExp(text).test(element.textContent);});
  
@@ -85,40 +83,18 @@ function contains(selector, text) {
 
 // ******* Sets clicked cell, updates moves and checks the win criteria 
 
-// Let's make it so that this fills in two cells instead of one - the one selected 
-// and the one next to it
 function set() {
     if (this.innerHTML !== EMPTY) { //If the cell is already filled in, don't do anything
         return;
     }
-    // className - A String, representing the class, or a space-separated list of classes, of an element
-    var clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
-    var clickedCellRow = parseInt(this.className.substring(8, 9));
-    // console.log('clickedCellCol= ', clickedCellCol ,'clickedCellRow =', clickedCellRow);
-
-    // I will need to think about how to prevent overlays... 
-
-    for (var i = 0; i < 2; i++) { // This will need to be generalised to deal with different blocks... 
-        //Use the classNameString() function to complete the cell with the marker
-        var clickedCell = document.querySelector(classNameString(clickedCellCol, clickedCellRow)); //This works
-        clickedCell.innerHTML = marker; 
-        clickedCellCol += 1; // This will need to be generalised to deal with different blocks... 
-    }
-
-    // *************** Nothing to do with selecting cells below here
+    this.innerHTML = turn; // This sets the textContent? Used in contains() function? 
     moves += 1; // I don't need moves
-    score += 1; // Score will need to be extended to deal with different blocks... 
+    score += 1;
     
-    clear(this); // Check if any columns/rows should be cleared 
+    clear(this);
     
     document.getElementById('score').textContent = 'Score = ' + score; // Why don't we use innerHTML, instead of text content?
+    
 }
-
-// Takes two numbers as an input and will return a correctly formatted class string e.g. 'col2 .row3'
-function classNameString(colNum, rowNum) {
-    return '.col' + colNum + '.row' + rowNum;
-}
-
-
 
 init();
