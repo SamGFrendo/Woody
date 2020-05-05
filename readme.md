@@ -41,30 +41,34 @@ The code included some red herrings that made it a little bit harder to unpick. 
 
 4. Next up - a completed row or column shouldn't result in a win - it should clear that row or column... and add to the score. To do this I modified the win() function and changed its name to clear(). I needed to modify the approach to the clear() function so that a column AND and a row would be cleared if the criteria was met for each of them. 
 
-I ran into an issue with the first draft of the clear() function. I hardcode the set() function to be able to set two cells at the same time. This showed that the clear() function would only clear one column, if two columns were completed at the same time
+I ran into an issue with the first draft of the clear() function. I hardcode the set() function to be able to set two cells at the same time. This showed that the clear() function would only clear one column, if two columns were completed at the same time. I could simply call it twice (e.g. for each marked cell) to allow it to clear two columns. 
+
+5. I needed to create a new function checkEmpty() which get called ahead of set() and does a check on all of the cells to make sure they are empty. If they are not then we cannot call set(). This solved the 'overlay' function - meaning blocks start to feel a bit more solid. I also check for 'offlay' within the same function. 
 
 **************************************************************************************************************
 
 to do... 
 
-5. Start adding objects of different types! 
-- How am I going to store the blocks - Do it in a different file. These will be variables that are 2D arrays
+
+1. Start adding objects of different types! 
+- Blocks are stored as 2D arrays. The blocks.js file is called before the script.js
 - How am I going to 'place' the objects <---- This is going to be super difficult! 
 
-I need to think about the set() function - I have the cell clicked, and I need to modify it so it adds more than one thing - first I can just hard code it to add more than one thing. 
+I need to think of a FRAMEWORK - I feel another function coming on 
+
+I need to think about the set() function - I have the cell clicked, and I need to modify it so it adds more than one thing - I have hardcoded it to add two things 
 
 
-6. I should add function descriptions to all of the functions
+2. I should add function descriptions to all of the functions
 
-7. I should probably move
 
-(It would be nice to be able to place the marker before the alert that tells you what has happened...)
 
 Things to find out a little more about... 
 1. The 'this' keyword in functions
 2. [].filter
 3. Splitting code across multipe files 
 4. Different between innerHTML and textContent 
+5. Should a function ALWAYS 'return'
 
 
 
