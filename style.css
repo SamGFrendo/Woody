@@ -5,10 +5,18 @@ table {
 }
 
 td {
+	/* This almost working, but can't be applied to the font */
+	/* transition: background-color 0.5s ease; */
 	background-color: black;
 	border: 3px solid white;
 	/* As I change cell size, I need to modify font size, I think it is roughly 20px less */
 	font-size:60px; 
-	color:#ffffff;
+	/* transition: color 0.5s ease; */
+	color: rgb(198, 198, 198);
 	border-radius: 10px 10px 10px 10px;
+}
+
+#marked {
+	
+	background-color: rgb(198, 198, 198);
 }

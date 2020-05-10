@@ -45,22 +45,20 @@ I ran into an issue with the first draft of the clear() function. I hardcode the
 
 5. I needed to create a new function checkEmpty() which get called ahead of set() and does a check on all of the cells to make sure they are empty. If they are not then we cannot call set(). This solved the 'overlay' function - meaning blocks start to feel a bit more solid. I also check for 'offlay' within the same function. 
 
+6. In order to be able to place different blocks, I created a new function processBlocks() that iterates through the block arrays and determines whether or not to set the cells based on the array content. In order to do this it first calls checkEmpty() and uses an array to store the results of that series of function calls. If every one of those calls is 'true', then the processBlocks() function will then call the set() function. 
+
 **************************************************************************************************************
 
 to do... 
 
 
-1. Start adding objects of different types! 
-- Blocks are stored as 2D arrays. The blocks.js file is called before the script.js
-- How am I going to 'place' the objects <---- This is going to be super difficult! 
-
-I need to think of a FRAMEWORK - I feel another function coming on 
-
-I need to think about the set() function - I have the cell clicked, and I need to modify it so it adds more than one thing - I have hardcoded it to add two things 
-
+1. Add block selector section! 
 
 2. I should add function descriptions to all of the functions
 
+3. I should replace var with let - check i can do this with no problem 
+
+4. I should make it so that clear() results in a fadeout of cells rather than dissapearing... this might be tricky 
 
 
 Things to find out a little more about... 
@@ -68,7 +66,8 @@ Things to find out a little more about...
 2. [].filter
 3. Splitting code across multipe files 
 4. Different between innerHTML and textContent 
-5. Should a function ALWAYS 'return'
+5. Should a function ALWAYS explicetly 'return'
+6. I need to figure out the best way to split a project across multiple files - what are modules?! 
 
 
 
