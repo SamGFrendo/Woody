@@ -3,14 +3,25 @@
 
 // I wonder if we could think about moving these variables inside functions?
 // I think these are funcitoning as global variables that can be accessed across functions
-var N_SIZE = 10, // I don't know why these are capitalised...? 
+var N_SIZE = 5, // I don't know why these are capitalised...? 
 EMPTY = "&nbsp;", // I don't know why these are capitalised...? 
 boxes = [],
 marker = "X", // Concept of 'X' and 'O' has been removed - we can keep this though
 score; // 'score' set in startNewGame() - Not sure if this is the best approach?
 
-let block;
-let reset = 0;
+
+//console.log(squareTwo)
+//console.log(rowFour)
+//console.log(L4three)
+
+// ******** Just set the block by hand for testing now 
+var block = L4Three;
+//var block = squareTwo; 
+//var block = rowFour;
+//var block = colFour; 
+//var block = rowFive;
+//var block = L2Two;
+//var block = squareThree;
 
 // ************** Initialises the board in the UI and calls StartNewGame.
 
@@ -25,20 +36,27 @@ function init() {
         board.appendChild(row);
         for (var j = 0; j < N_SIZE; j++) {
             var cell = document.createElement('td');
-            cell.setAttribute('height', 40); // Don't forget font-size in css will need to be modified 
-            cell.setAttribute('width', 40); // Don't forget font-size in css will need to be modified 
+            cell.setAttribute('height', 80); // Don't forget font-size in css will need to be modified 
+            cell.setAttribute('width', 80); // Don't forget font-size in css will need to be modified 
             cell.setAttribute('align', 'center');
             cell.setAttribute('valign', 'center');
             cell.classList.add('col' + j,'row' + i);
+
+            //cell.addEventListener("click", set); // can I call two functions from an event listener? 
+            // doesn't look like I can add two functions to an event listener using this approach 
+            // Call checkEmpty for test purposes 
+            
+            // cell.addEventListener("click", checkEmpty);
+
+            // I will need to call processBlock only (I think!)
             cell.addEventListener("click", processBlock);
 
             row.appendChild(cell);
             boxes.push(cell); // I'm not sure why I need to push cell to the boxes array here... except it doesn't work if I don't... 
         }
     }
-    document.getElementById('tictactoe').appendChild(board);
+    document.getElementById("tictactoe").appendChild(board);
     startNewGame();
-    buildBlockSelector();
 }
 
 // New game ************** Sets the 'start' state of the initiliased board
@@ -49,41 +67,6 @@ function startNewGame() {
         square.innerHTML = EMPTY;
     });
 }
-
-// In the final version I want to input blocks, but for now I will replicate Woody
-
-// buildBlockSelector() appends the selectBlock <div>
-// The selector blocks should dissapear when they have been placed... 
-function buildBlockSelector() {
-    for (let i = 0; i < 3; i++) {
-        let selectBlockImage = document.createElement('img'); 
-        let specificBlock = chooseRandomBlock();
-
-        document.getElementById('block-selector').appendChild(selectBlockImage)
-        selectBlockImage.src  = `./images/${specificBlock}.png`;
-        selectBlockImage.className = specificBlock; //className is used to control 
-        selectBlockImage.addEventListener('click', blockSelected);
-        selectBlockImage.addEventListener('click', resetBlockSelector);
-    };
-};
-
-function blockSelected() { 
-    let clickedBlock = this.className;
-    block = blocks[clickedBlock]; // This is setting 'block' which gets passed to processBlock() 
-};
-
-// reset BlockSelector - this needs to change - reset should be based on placed blocks 
-function resetBlockSelector() {
-    reset +=1
-    if (reset >= 3) {
-        let blockSelector = document.getElementById('block-selector')
-        while (blockSelector.firstChild) {
-            blockSelector.removeChild(blockSelector.firstChild);
-        }
-        buildBlockSelector();
-        reset = 0;
-    };
-};
 
 // ******** Check if columns and/or rows should be cleared criteria is met **************
 
@@ -112,22 +95,24 @@ function clear(marked) {
         score += N_SIZE;
     }
     return; // Not sure I need return here
-};
+}
 
 function contains(selector, text) {
     var elements = document.querySelectorAll(selector);
     return [].filter.call(elements, function(element){return RegExp(text).test(element.textContent);});
-};
+ 
+}
 
 // Takes two numbers as an input and will return a correctly formatted class string e.g. 'col2 .row3'
 function classNameString(colNum, rowNum) {
     return '.col' + colNum + '.row' + rowNum;
-};
+}
 
-// ******* Sets cells based on processBlock, updates moves and checks the clear criteria *****
+// ******* Sets clicked cell, updates moves and checks the clear criteria *****
 function set(colNum, rowNum) { 
     //Use the classNameString() function to complete the cell with the marker
     var markCell = document.querySelector(classNameString(colNum, rowNum)); 
+
     markCell.innerHTML = marker; 
     markCell.setAttribute('id', 'marked'); // css can style background
     
@@ -135,10 +120,6 @@ function set(colNum, rowNum) {
     
     score += 1;
     document.getElementById('score').textContent = 'Score = ' + score; // Why don't we use innerHTML, instead of text content?
-
-    // Once set has been run block should = undefined 
-
-    // block = undefined; This didn't work 
 }
 
 function checkEmpty(colNum, rowNum) { 
@@ -155,18 +136,12 @@ function checkEmpty(colNum, rowNum) {
 function processBlock() {
     var clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
     var clickedCellRow = parseInt(this.className.substring(8, 9));
-    
+
     var col = clickedCellCol // Sort out this descrepancy later 
     var row = clickedCellRow // Sort out this descrepancy later 
-    var checkFalse = []; // Used to determine if checkEmpty ever returns 'false' 
-    // maybe check block isn't undefined and then catch the error
 
-    if (block == undefined) {
-        console.log('Need to choose a block');
-        return;
-    }
+    var checkFalse = [];
 
-    // Check if the required cells are empty 
     for (var i = 0; i < block.length; i++) { 
         for (var j = 0; j < block[i].length; j++) {
             if (block[i][j] == 1) {
@@ -178,7 +153,6 @@ function processBlock() {
         col = col - block[0].length // This doesn't seem that eligant 
     }
 
-    // If the rquired cells are empty then set them 
     col = clickedCellCol; // Need to reset because of the above line - doesn't feel elegant 
     row = clickedCellRow;
 

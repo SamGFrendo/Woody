@@ -5,18 +5,36 @@ table {
 }
 
 td {
-	/* This almost working, but can't be applied to the font */
-	/* transition: background-color 0.5s ease; */
+
+    /* Transition all makes it clear what comes in and goes out */
+    /* But the bloody  */
+    transition: all 0.5s ease;  
 	background-color: black;
 	border: 3px solid white;
 	/* As I change cell size, I need to modify font size, I think it is roughly 20px less */
-	font-size:60px; 
-	/* transition: color 0.5s ease; */
-	color: rgb(198, 198, 198);
+	font-size:20px; 
+	color: black;
 	border-radius: 10px 10px 10px 10px;
 }
 
 #marked {
-	
-	background-color: rgb(198, 198, 198);
+    /* This almost working, but can't be applied to the font */
+    /* It also only works on the way in, not the way back  */
+	/* transition: background-color 0.5s ease;  */
+    background-color: rgb(198, 198, 198);
+    color:  rgb(198, 198, 198);
+}
+
+#block-selector {
+    display: flex; 
+    justify-content: center;
+}
+  
+
+
+img {
+    /* border: 3px solid white; */
+    height: 90px;
+    width: 90px;
+    border-radius: 5px 5px 5px 5px;
 }

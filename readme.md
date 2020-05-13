@@ -25,7 +25,7 @@ The funcions win() and contains() work together to determine if win criteria hav
 
 The way that the code determines if the win criteria has been met is complicated but quite elegant.  
 
-![console log output](./images/console-log-testClass-and-elements.png)
+![console log output](./readme-images/console-log-testClass-and-elements.png)
 
 When we click a cell we look at the set of all cells that could be completed with your turn marker (e.g. 'X' or 'O') to result in a win. We then count how many of this set contain the turn counter. The code looks at each win 'set' in turn (e.g. the rows or columns that could result in a win). If this = 3 then this turn wins. --- (This requires more explanation, but is enough for me for now)
 
@@ -47,12 +47,30 @@ I ran into an issue with the first draft of the clear() function. I hardcode the
 
 6. In order to be able to place different blocks, I created a new function processBlocks() that iterates through the block arrays and determines whether or not to set the cells based on the array content. In order to do this it first calls checkEmpty() and uses an array to store the results of that series of function calls. If every one of those calls is 'true', then the processBlocks() function will then call the set() function. 
 
-**************************************************************************************************************
+![blocks available](./readme-images/blocks.png)
+
+7. Next up was the ability to select blocks. Four new function were needed for this. 
+
+- buildBlockSelector() - This creates the html elements allowing the user to select the blocks. This function calls all the other functions. 
+- blockSelected() - sets the blockSelected based on the html element clicked. 
+- resetBlockSelector() - If there has been three clicks then refresh the block selector section. 
+- chooseRandomBlock() - Returns a random block (string) every time it is called. 
+
+During this process I realised it made sense to create an object to store the block arrays - this made them easier to access. 
+
+
+*************************************************************************************************
 
 to do... 
 
+1. I also want to make it so you can't click a block twice - I need to capture behaviour if I click without selecting a block 
 
-1. Add block selector section! 
+- I need to change it so I only change after there has been three placements, not three clicks
+
+- I also need to catch the 'no block selected' issue - should set block to 'null' after it has been added. 
+
+- Want to make score bigger... 
+
 
 2. I should add function descriptions to all of the functions
 
@@ -60,6 +78,7 @@ to do...
 
 4. I should make it so that clear() results in a fadeout of cells rather than dissapearing... this might be tricky 
 
+5. I should get my head around css grid. Seems like that is the way to go. 
 
 Things to find out a little more about... 
 1. The 'this' keyword in functions
