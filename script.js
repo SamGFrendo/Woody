@@ -6,9 +6,10 @@
 var N_SIZE = 10, // I don't know why these are capitalised...? 
 EMPTY = "&nbsp;", // I don't know why these are capitalised...? 
 boxes = [],
-marker = "X", // Concept of 'X' and 'O' has been removed - we can keep this though
+marker = "X", // A lot runs based on innerHTML - so I should keep this
 score; // 'score' set in startNewGame() - Not sure if this is the best approach?
 
+let clickedBlockSelectorID;
 let block;
 let reset = 0;
 
@@ -31,7 +32,7 @@ function init() {
             cell.setAttribute('valign', 'center');
             cell.classList.add('col' + j,'row' + i);
             cell.addEventListener("click", processBlock);
-
+            cell.addEventListener("click", resetBlockSelector);
             row.appendChild(cell);
             boxes.push(cell); // I'm not sure why I need to push cell to the boxes array here... except it doesn't work if I don't... 
         }
@@ -53,7 +54,6 @@ function startNewGame() {
 // In the final version I want to input blocks, but for now I will replicate Woody
 
 // buildBlockSelector() appends the selectBlock <div>
-// The selector blocks should dissapear when they have been placed... 
 function buildBlockSelector() {
     for (let i = 0; i < 3; i++) {
         let selectBlockImage = document.createElement('img'); 
@@ -62,19 +62,19 @@ function buildBlockSelector() {
         document.getElementById('block-selector').appendChild(selectBlockImage)
         selectBlockImage.src  = `./images/${specificBlock}.png`;
         selectBlockImage.className = specificBlock; //className is used to control 
+        selectBlockImage.id = 'selector-box-' + i;
         selectBlockImage.addEventListener('click', blockSelected);
-        selectBlockImage.addEventListener('click', resetBlockSelector);
+
     };
 };
 
 function blockSelected() { 
     let clickedBlock = this.className;
+    clickedBlockSelectorID = this.id;
     block = blocks[clickedBlock]; // This is setting 'block' which gets passed to processBlock() 
 };
 
-// reset BlockSelector - this needs to change - reset should be based on placed blocks 
 function resetBlockSelector() {
-    reset +=1
     if (reset >= 3) {
         let blockSelector = document.getElementById('block-selector')
         while (blockSelector.firstChild) {
@@ -86,8 +86,6 @@ function resetBlockSelector() {
 };
 
 // ******** Check if columns and/or rows should be cleared criteria is met **************
-
-// The clear() function is only being passed the clicked cells... it should be passed all marked cells
 
 function clear(marked) {
     // The column/row of the clicked cell
@@ -129,7 +127,7 @@ function set(colNum, rowNum) {
     //Use the classNameString() function to complete the cell with the marker
     var markCell = document.querySelector(classNameString(colNum, rowNum)); 
     markCell.innerHTML = marker; 
-    markCell.setAttribute('id', 'marked'); // css can style background
+    markCell.setAttribute('id', 'marked'); // css can style background - Not actually sure I need to add an X! 
     
     clear(markCell); // Every time I mark a cell, check if a column or row should be cleared 
     
@@ -137,8 +135,6 @@ function set(colNum, rowNum) {
     document.getElementById('score').textContent = 'Score = ' + score; // Why don't we use innerHTML, instead of text content?
 
     // Once set has been run block should = undefined 
-
-    // block = undefined; This didn't work 
 }
 
 function checkEmpty(colNum, rowNum) { 
@@ -162,7 +158,7 @@ function processBlock() {
     // maybe check block isn't undefined and then catch the error
 
     if (block == undefined) {
-        console.log('Need to choose a block');
+        alert('You need to choose a block');
         return;
     }
 
@@ -197,6 +193,11 @@ function processBlock() {
         console.log('Overlay or Offlay detected');
         return;
     }
+    block = undefined; // Once the block has been set, you need to choose another block 
+    document.getElementById(clickedBlockSelectorID).className = null // but you can't choose any that have been set
+    document.getElementById(clickedBlockSelectorID).src = '/images/Blank.png'
+
+    reset += 1;
     return;
 }
 

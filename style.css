@@ -1,36 +1,36 @@
 /* I might want to modify the font size to resize the squares */
 
+
 table {
 	border-collapse:collapse;
 }
 
 td {
-
-    /* Transition all makes it clear what comes in and goes out */
-    /* But the bloody  */
     transition: all 0.5s ease;  
 	background-color: black;
 	border: 3px solid white;
-	/* As I change cell size, I need to modify font size, I think it is roughly 20px less */
 	font-size:20px; 
 	color: black;
 	border-radius: 10px 10px 10px 10px;
 }
 
 #marked {
-    /* This almost working, but can't be applied to the font */
-    /* It also only works on the way in, not the way back  */
-	/* transition: background-color 0.5s ease;  */
     background-color: rgb(198, 198, 198);
     color:  rgb(198, 198, 198);
 }
 
 #block-selector {
     display: flex; 
-    justify-content: center;
-}
-  
+    width: 300px;
+    justify-content: space-between;
+    padding:5px; /* this */
+    margin: 0 auto;
 
+}
+
+#score {
+	font-size:20px; 
+}
 
 img {
     /* border: 3px solid white; */
