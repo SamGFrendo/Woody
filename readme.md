@@ -56,20 +56,23 @@ I ran into an issue with the first draft of the clear() function. I hardcode the
 - resetBlockSelector() - If there has been three clicks then refresh the block selector section. 
 - chooseRandomBlock() - Returns a random block (string) every time it is called. 
 
-During this process I realised it made sense to create an object to store the block arrays - this made them easier to access. 
+During this process I realised it made sense to create an object to store the block arrays - this made them easier to access.
 
+8. I finished up creating woody by making a few tweaks that made it easier for users to follow what was going on. This involved creating a few more global variables, which seemed a bit off - but I didn't want to concern myself too much about this at this stage. Also some faffing with CSS. Next up I want to create a BRAIN. 
+
+Creating the BRAIN.
+
+1. Having built Woody, I wanted to create a way of playing it programatically - that way I could get testing different approaches and see if I could build a program that would allow me smash my high score. First up I needed a way of knowing how many cells were marked on the board. Having a large number of blank cells after each set of three blocks seemed like a good approach to a winning strategy. 
+
+2. Having created another js file - I realised it made more sense to use the import/export from modules to keep things simple and orgnaised. 
+
+3. The function automaticBlockPlacer() is the start of being able to iterate all the cells on the board, placing different blocks.  
 
 *************************************************************************************************
 
 to do... 
 
-1. I also want to make it so you can't click a block twice - I need to capture behaviour if I click without selecting a block 
-
-- I need to change it so I only change after there has been three placements, not three clicks
-
-- I also need to catch the 'no block selected' issue - should set block to 'null' after it has been added. 
-
-- Want to make score bigger... 
+1. automaticBlockPlacer is going to have to pick up differnt blocks, place them in different orders, and keep track of which one gives the best score 
 
 
 2. I should add function descriptions to all of the functions

@@ -2,6 +2,8 @@
 
 "use strict"
 
+export {chooseRandomBlock, blocks}
+
 function chooseRandomBlock() {
 
     let arrBlocks = [
@@ -137,3 +139,4 @@ L4Two: [
     [1,1]
 ]
 };
+

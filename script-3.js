@@ -1,11 +1,9 @@
 
 "use strict";
 
-import {countMarkedCells, automaticBlockPlacer} from './brain.js'
-import {chooseRandomBlock, blocks} from './blocks.js'
-
-
-export var N_SIZE = 10, // I don't know why these are capitalised...? 
+// I wonder if we could think about moving these variables inside functions?
+// I think these are funcitoning as global variables that can be accessed across functions
+var N_SIZE = 10, // I don't know why these are capitalised...? 
 EMPTY = "&nbsp;", // I don't know why these are capitalised...? 
 boxes = [],
 marker = "X", // A lot runs based on innerHTML - so I should keep this
@@ -42,7 +40,6 @@ function init() {
     document.getElementById('tictactoe').appendChild(board);
     startNewGame();
     buildBlockSelector();
-    document.getElementById('start-brain').addEventListener('click', automaticBlockPlacer);
 }
 
 // New game ************** Sets the 'start' state of the initiliased board
@@ -85,7 +82,6 @@ function resetBlockSelector() {
         }
         buildBlockSelector();
         reset = 0;
-        countMarkedCells();
     };
 };
 
@@ -127,7 +123,7 @@ function classNameString(colNum, rowNum) {
 };
 
 // ******* Sets cells based on processBlock, updates moves and checks the clear criteria *****
-export function set(colNum, rowNum) { 
+function set(colNum, rowNum) { 
     //Use the classNameString() function to complete the cell with the marker
     var markCell = document.querySelector(classNameString(colNum, rowNum)); 
     markCell.innerHTML = marker; 
@@ -141,7 +137,7 @@ export function set(colNum, rowNum) {
     // Once set has been run block should = undefined 
 }
 
-export function checkEmpty(colNum, rowNum) { 
+function checkEmpty(colNum, rowNum) { 
     var checkCell = document.querySelector(classNameString(colNum, rowNum)); 
         if (checkCell == null) {
             return false;
@@ -152,9 +148,7 @@ export function checkEmpty(colNum, rowNum) {
         return true;
 }
 
-//proceeBlock gets called when a cell on the board is clicked
 function processBlock() {
-
     var clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
     var clickedCellRow = parseInt(this.className.substring(8, 9));
     
@@ -203,11 +197,8 @@ function processBlock() {
     document.getElementById(clickedBlockSelectorID).className = null // but you can't choose any that have been set
     document.getElementById(clickedBlockSelectorID).src = '/images/Blank.png'
 
-    //countMarkedCells();
     reset += 1;
     return;
 }
-
-
 
 init();
