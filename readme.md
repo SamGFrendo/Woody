@@ -66,13 +66,20 @@ Creating the BRAIN.
 
 2. Having created another js file - I realised it made more sense to use the import/export from modules to keep things simple and orgnaised. 
 
-3. The function automaticBlockPlacer() is the start of being able to iterate all the cells on the board, placing different blocks.  
+3. The function automaticBlockPlacer() is the start of being able to iterate all the cells on the board, placing different blocks. It looks like it runs in 5 thousandths of a milliseconds. 
+
+Interesting points discovered about - when I added an alert inside a loop I couldn't see any change in the UI - This is becuase the DOM doesn't get updated while events are happening - https://javascript.info/event-loop
 
 *************************************************************************************************
 
 to do... 
 
 1. automaticBlockPlacer is going to have to pick up differnt blocks, place them in different orders, and keep track of which one gives the best score 
+
+How can I get this to work... 
+1. place block 0,
+2. place block 1 - where it can next be placed...
+3. place block 2 - where it can next be placed... 
 
 
 2. I should add function descriptions to all of the functions
