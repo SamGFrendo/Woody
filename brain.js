@@ -1,7 +1,7 @@
 
 "use strict";
 
-import {set, checkEmpty, N_SIZE} from './script.js'
+import {set, checkEmpty, N_SIZE, EMPTY, classNameString} from './script.js'
 import {blocks} from './blocks.js'
 
 let block;
@@ -15,6 +15,19 @@ export function countMarkedCells() {
     let countMarked = [].filter.call(elements, function(element){return RegExp('X').test(element.textContent);}).length;
     
     return countMarked;
+};
+
+// I DON'T KNOW WHY THIS DOESN'T WORK
+function clearAllCells() {
+    console.log('Is this function called');
+    for (let i = 0; i < N_SIZE; i++) {
+        for (let j = 0; j < N_SIZE; j++) {
+            console.log('Does the loop get called');
+            // I needed to change the innerHTML and the Attribute so that the background changes! 
+            document.querySelector(classNameString(i, j)).innerHTML = EMPTY;
+            document.querySelector(classNameString(i, j)).setAttribute('id', '');
+        };
+    };    
 };
 
 // Then get something that programatically places all of the blocks
@@ -40,8 +53,8 @@ export function automaticBlockPlacer() {
     // I need to clear the cells after I have counted them 
 
     
-    for (let i = 0; i < N_SIZE -1; i++) {
-        for (let j = 0; j < N_SIZE -1; j++) {
+    for (let i = 0; i < N_SIZE; i++) {
+        for (let j = 0; j < N_SIZE; j++) {
 
             // Set the block to use based on what is in the first selector 
 
@@ -60,6 +73,7 @@ export function automaticBlockPlacer() {
                     arrCountMarkedCells.push(countMarkedCells());
                     console.log('Array of countMarkedCells after all placed= ', arrCountMarkedCells);
                     // Should clear cells after counted - then reloop on to the next 
+                    clearAllCells()
                     return;
                 }
             }

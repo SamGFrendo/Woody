@@ -70,26 +70,33 @@ Creating the BRAIN.
 
 Interesting point discovered - when I added an 'alert' inside a loop I couldn't see any change in the UI - This is becuase the DOM doesn't get updated while events are happening - https://javascript.info/event-loop. By adding a 'confirm' I could opt out of the loop. 
 
+3. The function clearAllCells() does what it says on the tin. This will allow us to count each different variation of placed cells. 
+
 *************************************************************************************************
 
 to do... 
+1. Write a function that will effectively clear all cells - this has to be done in order to be able to count and move on 
 
-1. automaticBlockPlacer is going to have to pick up differnt blocks, place them in different orders, and keep track of which one gives the best score 
+2. automaticBlockPlacer is going to have to pick up differnt blocks, place them in different orders, and keep track of which one gives the best score. 
 
 I can currently just place the first three blocks. I have to figure out how I can make it so that I can move on to the next turn, and try many different combinations - currently just do the first available... 
 
 
-2. I should add function descriptions to all of the functions
+It's difficult to figure out how I can work through all combinations - while still respecting the fact that the blocks can't overlay from themselves - over
 
-3. I should replace var with let - check i can do this with no problem 
 
-4. I should make it so that clear() results in a fadeout of cells rather than dissapearing... this might be tricky 
+Additional stuff to do 
+1. I should add function descriptions to all of the functions
 
-5. I should get my head around css grid. Seems like that is the way to go. 
+2. I should replace var with let - check i can do this with no problem 
 
-6. Replace '==' with '==='
+3. I should make it so that clear() results in a fadeout of cells rather than dissapearing... this might be tricky 
 
-7. See this - https://levelup.gitconnected.com/javascript-refactoring-tips-making-functions-clearer-and-cleaner-c568c299cbb2
+4. I should get my head around css grid. Seems like that is the way to go. 
+
+5. Replace '==' with '==='
+
+6. See this - https://levelup.gitconnected.com/javascript-refactoring-tips-making-functions-clearer-and-cleaner-c568c299cbb2
 
 
 Things to find out a little more about... 

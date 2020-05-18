@@ -5,11 +5,11 @@ import {countMarkedCells, automaticBlockPlacer} from './brain.js'
 import {chooseRandomBlock, blocks} from './blocks.js'
 
 
-export var N_SIZE = 10, // I don't know why these are capitalised...? 
-EMPTY = "&nbsp;", // I don't know why these are capitalised...? 
-boxes = [],
-marker = "X", // A lot runs based on innerHTML - so I should keep this
-score; // 'score' set in startNewGame() - Not sure if this is the best approach?
+export let N_SIZE = 10; // I don't know why these are capitalised...? 
+export let EMPTY = "&nbsp;"; // I don't know why these are capitalised...? 
+let boxes = [];
+let marker = "X"; // A lot runs based on innerHTML - so I should keep this
+let score; // 'score' set in startNewGame() - Not sure if this is the best approach?
 
 let clickedBlockSelectorID;
 let block;
@@ -122,7 +122,7 @@ function contains(selector, text) {
 };
 
 // Takes two numbers as an input and will return a correctly formatted class string e.g. 'col2 .row3'
-function classNameString(colNum, rowNum) {
+export function classNameString(colNum, rowNum) {
     return '.col' + colNum + '.row' + rowNum;
 };
 
