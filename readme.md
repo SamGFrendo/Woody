@@ -68,7 +68,7 @@ Creating the BRAIN.
 
 3. The function automaticBlockPlacer() is the start of being able to iterate all the cells on the board, placing different blocks. It looks like it runs in 5 thousandths of a milliseconds. 
 
-Interesting points discovered about - when I added an alert inside a loop I couldn't see any change in the UI - This is becuase the DOM doesn't get updated while events are happening - https://javascript.info/event-loop
+Interesting point discovered - when I added an 'alert' inside a loop I couldn't see any change in the UI - This is becuase the DOM doesn't get updated while events are happening - https://javascript.info/event-loop. By adding a 'confirm' I could opt out of the loop. 
 
 *************************************************************************************************
 
@@ -76,10 +76,7 @@ to do...
 
 1. automaticBlockPlacer is going to have to pick up differnt blocks, place them in different orders, and keep track of which one gives the best score 
 
-How can I get this to work... 
-1. place block 0,
-2. place block 1 - where it can next be placed...
-3. place block 2 - where it can next be placed... 
+I can currently just place the first three blocks. I have to figure out how I can make it so that I can move on to the next turn, and try many different combinations - currently just do the first available... 
 
 
 2. I should add function descriptions to all of the functions
@@ -90,13 +87,18 @@ How can I get this to work...
 
 5. I should get my head around css grid. Seems like that is the way to go. 
 
+6. Replace '==' with '==='
+
+7. See this - https://levelup.gitconnected.com/javascript-refactoring-tips-making-functions-clearer-and-cleaner-c568c299cbb2
+
+
 Things to find out a little more about... 
 1. The 'this' keyword in functions
 2. [].filter
-3. Splitting code across multipe files 
+3. Look into 'debugger'
 4. Different between innerHTML and textContent 
 5. Should a function ALWAYS explicetly 'return'
 6. I need to figure out the best way to split a project across multiple files - what are modules?! 
-
+7. Look into codespaces -https://onezero.medium.com/the-future-of-code-is-in-your-browser-2c51a08e8ab2
 
 

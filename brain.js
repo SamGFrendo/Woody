@@ -6,14 +6,14 @@ import {blocks} from './blocks.js'
 
 let block;
 let couldBlockBePlaced = false; // assume false, then switch to true 
+let selectorId = 0; // Allows iteration through the different cells
 
-// countFilledCells is called after each turn (e.g. three moves)
+// countMarkedCells() is called after each turn (e.g. three moves)
 // This doesn't work when I'm using the automaticBlockPlacer
 export function countMarkedCells() {
     let elements = document.querySelectorAll('td');
     let countMarked = [].filter.call(elements, function(element){return RegExp('X').test(element.textContent);}).length;
     
-    //console.log('cells filled = ' + countMarked);
     return countMarked;
 };
 
@@ -23,7 +23,11 @@ export function countMarkedCells() {
 
 // picks up block at 0, places it, moves on etc. It moves top to bottom, left to right
 
-let selectorId = 0;
+// 1st of all I need to be able to iterate through every variation of placing blocks in 0,1,2 
+
+// I should remove the concept of 'can place' I should just iterate through all variations
+// keep track of 'score' or 'invalid' 
+
 
 // automaticBlockPlacer() is called when [Start BRAIN] is clicked
 export function automaticBlockPlacer() {
@@ -35,31 +39,36 @@ export function automaticBlockPlacer() {
     // AND A WAY OF STORING THE COMBINATIONS 
     // I need to clear the cells after I have counted them 
 
+    
     for (let i = 0; i < N_SIZE -1; i++) {
         for (let j = 0; j < N_SIZE -1; j++) {
 
-            //Set the block to use based on what is in the first selector 
+            // Set the block to use based on what is in the first selector 
+
+            // This will error on the next turn because I need to reset selctor 
             block = blocks[document.getElementById(`selector-box-${selectorId}`).className];
 
             automaticProcessBlock(i,j);
             
-            if (couldBlockBePlaced == true) {
+            if (couldBlockBePlaced == true) { // get rid of this concept - just iterate through all 
                 selectorId += 1;
                 if (selectorId > 2) {
+                    console.log('cells marked = ' + countMarkedCells());
+                    
+                    //I think I should create an object to store this info 
+                    // I should store cells marked as well as // xy coordiates for every cell
+                    arrCountMarkedCells.push(countMarkedCells());
+                    console.log('Array of countMarkedCells after all placed= ', arrCountMarkedCells);
+                    // Should clear cells after counted - then reloop on to the next 
                     return;
                 }
-            } else {
-                console.log('If statement no longer true')
             }
 
             // I need to clear all blocks during each iteration, in order for count to be accurate 
 
+
+
             //******* This is for testing purposes only at this stage */
-            //I think I should create an object to store this info 
-            arrCountMarkedCells.push(countMarkedCells()); // I should store cells marked as well as // xy coordiates for every cell
-            //console.log(arrCountMarkedCells);
-
-
             // This has shown me that the DOM doesn't get updated until events are finished
             /*
             var r = confirm("Press a button!");
