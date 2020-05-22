@@ -60,29 +60,47 @@ During this process I realised it made sense to create an object to store the bl
 
 8. I finished up creating woody by making a few tweaks that made it easier for users to follow what was going on. This involved creating a few more global variables, which seemed a bit off - but I didn't want to concern myself too much about this at this stage. Also some faffing with CSS. Next up I want to create a BRAIN. 
 
-Creating the BRAIN.
+## Creating the BRAIN.
 
 1. Having built Woody, I wanted to create a way of playing it programatically - that way I could get testing different approaches and see if I could build a program that would allow me smash my high score. First up I needed a way of knowing how many cells were marked on the board. Having a large number of blank cells after each set of three blocks seemed like a good approach to a winning strategy. 
 
 2. Having created another js file - I realised it made more sense to use the import/export from modules to keep things simple and orgnaised. 
 
-3. The function automaticBlockPlacer() is the start of being able to iterate all the cells on the board, placing different blocks. It looks like it runs in 5 thousandths of a milliseconds. 
+3. The function automaticBlockPlacer() is the start of being able to iterate all the cells on the board, placing different blocks. It looked like it run in 5 thousandths of a milliseconds - but this didn't hold true at scale. 
 
 Interesting point discovered - when I added an 'alert' inside a loop I couldn't see any change in the UI - This is becuase the DOM doesn't get updated while events are happening - https://javascript.info/event-loop. By adding a 'confirm' I could opt out of the loop. 
 
-3. The function clearAllCells() does what it says on the tin. This will allow us to count each different variation of placed cells. 
+3. The function clearAllCells() does what it says on the tin. This will allow us to count each different variation of placed cells. The problem with this is that it turns out to be highly inefficient - it's making 100 calls to the DOM browser API. When I use it in combination 
+
+4. Function automaticBlockPlacer() places every possible combination of available blocks. The issue is it takes too long to run! I think we are doing two expensive things; 
+- Accessing the DOM via the browser API multiple times. 
+- using push() to add elements to an array 
+
+I tried the function with a few different variations. 
+1. No clearAllCells() - Calling clearAllCells() was slowing things down a lot. Even though it's needed, I got rid of it for testing
+2. No push() - I'm interested to see if this is what is causing things to slow down
+3. No automaticProcessBlock() - How fast could it go, if it's not actually doing something - In this case it run in about 0.3 seconds when 10x10. 
+
+I used performance.now() to measure how long the function takes to run.
+
+![function performance](./readme-images/function-performance.png)
+automaticBlockPlacer() calls a number of other functions;
+- automaticProcessBlock(), which then calls;
+- - checkEmpty();
+- - set();
+
+This makes me think I should create a virtual board. This would mean that I wouldn't have to call the DOM browswer API multiple times during each iteration of the function. 
+
 
 *************************************************************************************************
 
 to do... 
-1. Write a function that will effectively clear all cells - this has to be done in order to be able to count and move on 
 
-2. automaticBlockPlacer is going to have to pick up differnt blocks, place them in different orders, and keep track of which one gives the best score. 
+1. automaticBlockPlacer is going to have to be made far more efficient. The current approach grinds to a halt at scale. 
 
-I can currently just place the first three blocks. I have to figure out how I can make it so that I can move on to the next turn, and try many different combinations - currently just do the first available... 
+I think the trick is going to be making a virtual board - so that I don't have to access the DOM all the time. What will be nice about this is I will be able to switch through old and new versions after each turn. 
 
-
-It's difficult to figure out how I can work through all combinations - while still respecting the fact that the blocks can't overlay from themselves - over
+I should also look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
 
 
 Additional stuff to do 
