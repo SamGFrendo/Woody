@@ -2,7 +2,26 @@
 
 "use strict"
 
-export {chooseRandomBlock, blocks}
+export {chooseRandomBlock, blocks, createVirtualBoard}
+
+// This successfully creates 10x10 2D array populated with zeros 
+function createVirtualBoard(boardSize) {
+    
+    let virtualBoard = new Array(boardSize); 
+  
+    // Loop to create 2D array using 1D array 
+    for (let i = 0; i < virtualBoard.length; i++) { 
+        virtualBoard[i] = []; 
+    };      
+    // Loop to initilize 2D array elements. 
+    for (let i = 0; i < boardSize; i++) { 
+        for (let j = 0; j < boardSize; j++) { 
+            virtualBoard[i][j] = 0; 
+        };
+    };
+    return virtualBoard;
+};
+
 
 function chooseRandomBlock() {
 

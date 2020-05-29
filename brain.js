@@ -2,7 +2,7 @@
 "use strict";
 
 import {set, checkEmpty, N_SIZE, EMPTY, classNameString} from './script.js'
-import {blocks} from './blocks.js'
+import {blocks, createVirtualBoard} from './blocks.js'
 
 let block;
 let couldBlockBePlaced = false; // assume false, then switch to true 
@@ -18,6 +18,20 @@ export function countMarkedCells() {
 };
 
 
+function countMarkedCellsVirtual(arr) {
+
+    let sumOfCells = 0;
+    
+    for (let i = 0; i < arr.length; i++) {
+        arr[i].forEach (function (element) {
+            sumOfCells = sumOfCells + element;  
+        });
+    }
+
+    return sumOfCells;
+};
+
+
 function clearAllCells() {
     //console.log('clearAllCells() called');
     for (let i = 0; i < N_SIZE; i++) {
@@ -29,86 +43,68 @@ function clearAllCells() {
     };    
 };
 
-// Then get something that programatically places all of the blocks
+// var and function declarations are 'hoisted'! This is why console.log seemed to behave strangely 
+export function automaticBlockPlacerTest() {
+    
+    let virtualBoard = createVirtualBoard(N_SIZE);
+    countMarkedCellsVirtual(virtualBoard);
+    automaticBlockPlacerVirtual(virtualBoard);
+}
+
+// I should make a variation of automaticBlockPlacer() that interacts with the virtual board
+// I can use this to test using a different approach to .push() and also test the speed
+
+// Programatically places all of the block combinations 
 // Needs to to do 0,1,2 - 0,2,1 - 1,2,0 - 1,0,2 - 2,1,0 - 2,0,1
-// I can acheive the above with an array 
-
-// picks up block at 0, places it, moves on etc. It moves top to bottom, left to right
-
-// 1st of all I need to be able to iterate through every variation of placing blocks in 0,1,2 
-
+// I can acheive the above with an array / object? 
 // I should remove the concept of 'can place' I should just iterate through all variations
 // keep track of 'score' or 'invalid' 
 
+// automaticBlockPlacerVirtual() is called when [Start BRAIN] is clicked
+function automaticBlockPlacerVirtual(virtualBoard) {
+    //var t0 = performance.now()  
 
-// automaticBlockPlacer() is called when [Start BRAIN] is clicked
-export function automaticBlockPlacer() {
-var t0 = performance.now()  
-
-    console.log('automaticBlockPlacer() called');
+    console.log('automaticBlockPlacerVirtual() called');
+    //console.log(virtualBoard);
     let arrCountMarkedCells = [];
     
-    // Need to look at every combination of three blocks - start with just 0,1,2
-    // Determine the number of marked cells for each of those combinations 
-    // I need to clear the cells after I have counted them 
+    for (let i = 0; i < N_SIZE; i++) {
+        for (let j = 0; j < N_SIZE; j++) {
+            virtualBoard[i][j] = 1;
+                    
+            for (let k = 0; k < N_SIZE; k++) {
+                for (let l = 0; l < N_SIZE; l++) {
+                    virtualBoard[k][l] = virtualBoard[k][l] + 1;
 
-    //This way, I do all combinations of 0,12
-    
-        for (let i = 0; i < N_SIZE; i++) {
-            for (let j = 0; j < N_SIZE; j++) {
-    
-                block = blocks[document.getElementById(`selector-box-0`).className];
-                automaticProcessBlock(i,j);
-                
-                for (let k = 0; k < N_SIZE; k++) {
-                    for (let l = 0; l < N_SIZE; l++) {
-
-                        block = blocks[document.getElementById(`selector-box-1`).className];
-                        automaticProcessBlock(k,l);
-
-                            for (let m = 0; m < N_SIZE; m++) {
-                                for (let n = 0; n < N_SIZE; n++) {
-
-                                 block = blocks[document.getElementById(`selector-box-2`).className]; 
-                                 automaticProcessBlock(m,n);     
-                                 
-                                // I think I should create an object to store this info 
-                                // I should store cells marked as well as the xy coordiates for every cell
-                                // arrCountMarkedCells.push(countMarkedCells());
-
-                                // Should clear cells after counted - then reloop on to the next 
-                                // clearAllCells()
-                                
-                                //******* This is for testing purposes only at this stage */
-                                // This has shown me that the DOM doesn't get updated until events are finished
-                                /*
-                                var r = confirm("Press a button!");
-                                if (r == true) {
-                                    console.log("You pressed OK!");
-                                } else {
-                                    return;
-                                }
-                                */
-                                 
-                                }
-
-                            }
-
-
-                    }
-                }
-
-                //console.log('cells marked = ' + countMarkedCells());
-
-                // I need to clear all blocks during each iteration, in order for count to be accurate 
-
+                    for (let m = 0; m < N_SIZE; m++) {
+                        for (let n = 0; n < N_SIZE; n++) {
+                        
+                        //This should just change the value 
+                        virtualBoard[m][n] = virtualBoard[k][l] + 1;
+                        
+                        //Playing with virtual board brain.js ln 76 not working... 
+                        arrCountMarkedCells.push(countMarkedCellsVirtual(virtualBoard));
+                        /*
+                        var r = confirm("Press a button!");
+                            if (r == true) {
+                                console.log("You pressed OK!");
+                            } else {
+                                return;
+                            }  
+                        */                                                                       
+                        };
+                    };
+                };
+            };    
         };
-    };
+    }; 
     console.log('Array of countMarkedCells after all placed= ', arrCountMarkedCells);
 
-var t1 = performance.now()
-console.log("Run through automaticBlockPlacer took " + (t1 - t0) + " milliseconds.")
+    // var t1 = performance.now()
+    // console.log("Run through automaticBlockPlacer took " + (t1 - t0) + " milliseconds.")
 };
+    
+
 
 // You can also speed up for loop: allocate array with 1M elements and in for loop assign values.
 // https://dev.to/henryjw/array-map-much-slower-than-for-loop-57if

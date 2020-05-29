@@ -86,19 +86,31 @@ I used performance.now() to measure how long the function takes to run.
 ![function performance](./readme-images/function-performance.png)
 automaticBlockPlacer() calls a number of other functions;
 - automaticProcessBlock(), which then calls;
-- - checkEmpty();
-- - set();
+- - checkEmpty() and;
+- - set() which then calls;
+- - - clear();
 
-This makes me think I should create a virtual board. This would mean that I wouldn't have to call the DOM browswer API multiple times during each iteration of the function. 
+5. I created a virtual board - I will now have to extend this, so I can use it to populate the 'real' board.
+- I need a setVirtual()
+- And a way of displaying the virtual board on the real board - I'll do all the virtual stuff in brain.js so that script.js can carry on working independently - no reasons why both things can't work side by side? I could even populate virtualBoard based on the content of the realBoard. 
 
 
 *************************************************************************************************
 
 to do... 
 
+Adding the count of marked cells to an array seems to be very quick when I do it virtually 
+5x5=0.024s
+6x6=0.032s 
+7x7=0.061s
+8x8=0.128s
+9x9=0.306s
+10x10=0.699s
+Clearly this is way better - but we're not placing blocks yet - and we're not calculating clearing them - so there are a number of function which will slow this down. If we virtualise all of them, 
+
 1. automaticBlockPlacer is going to have to be made far more efficient. The current approach grinds to a halt at scale. 
 
-I think the trick is going to be making a virtual board - so that I don't have to access the DOM all the time. What will be nice about this is I will be able to switch through old and new versions after each turn. 
+2. 
 
 I should also look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
 

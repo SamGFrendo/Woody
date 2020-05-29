@@ -1,7 +1,7 @@
 
 "use strict";
 
-import {countMarkedCells, automaticBlockPlacer} from './brain.js'
+import {countMarkedCells, automaticBlockPlacerTest} from './brain.js'
 import {chooseRandomBlock, blocks} from './blocks.js'
 
 
@@ -42,7 +42,8 @@ function init() {
     document.getElementById('tictactoe').appendChild(board);
     startNewGame();
     buildBlockSelector();
-    document.getElementById('start-brain').addEventListener('click', automaticBlockPlacer);
+    // Putting this in for testing purposes 
+    document.getElementById('start-brain').addEventListener('click', automaticBlockPlacerTest);
 }
 
 // New game ************** Sets the 'start' state of the initiliased board
