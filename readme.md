@@ -70,36 +70,30 @@ During this process I realised it made sense to create an object to store the bl
 
 Interesting point discovered - when I added an 'alert' inside a loop I couldn't see any change in the UI - This is becuase the DOM doesn't get updated while events are happening - https://javascript.info/event-loop. By adding a 'confirm' I could opt out of the loop. 
 
-3. The function clearAllCells() does what it says on the tin. This will allow us to count each different variation of placed cells. The problem with this is that it turns out to be highly inefficient - it's making 100 calls to the DOM browser API. When I use it in combination 
+4. The function clearAllCells() does what it says on the tin. This will allow us to count each different variation of placed cells. The problem with this is that it turns out to be highly inefficient - it's making 100 calls to the DOM browser API. When I use it in combination 
 
-4. Function automaticBlockPlacer() places every possible combination of available blocks. The issue is it takes too long to run! I think we are doing two expensive things; 
+5. Function automaticBlockPlacer() places every possible combination of available blocks. The issue is it takes too long to run! I think we are doing two expensive things; 
 - Accessing the DOM via the browser API multiple times. 
 - using push() to add elements to an array 
 
 I tried the function with a few different variations. 
-1. No clearAllCells() - Calling clearAllCells() was slowing things down a lot. Even though it's needed, I got rid of it for testing
-2. No push() - I'm interested to see if this is what is causing things to slow down
-3. No automaticProcessBlock() - How fast could it go, if it's not actually doing something - In this case it run in about 0.3 seconds when 10x10. 
+a) No clearAllCells() - Calling clearAllCells() was slowing things down a lot. Even though it's needed, I got rid of it for testing
+b) No push() - I'm interested to see if this is what is causing things to slow down
+c) No automaticProcessBlock() - How fast could it go, if it's not actually doing something - In this case it run in about 0.3 seconds when 10x10. 
 
 I used performance.now() to measure how long the function takes to run.
 
 ![function performance](./readme-images/function-performance.png)
+
 automaticBlockPlacer() calls a number of other functions;
 - automaticProcessBlock(), which then calls;
 - - checkEmpty() and;
 - - set() which then calls;
 - - - clear();
 
-5. I created a virtual board - I will now have to extend this, so I can use it to populate the 'real' board.
-- I need a setVirtual()
-- And a way of displaying the virtual board on the real board - I'll do all the virtual stuff in brain.js so that script.js can carry on working independently - no reasons why both things can't work side by side? I could even populate virtualBoard based on the content of the realBoard. 
+6. I created a virtual board, the idea being that this will be a more efficient way of processing information. - I may need to extend this, so I can use it to populate the 'real' board.
 
-
-*************************************************************************************************
-
-to do... 
-
-Adding the count of marked cells to an array seems to be very quick when I do it virtually 
+This is the time it takes to iterate through, simply adding 1 to the cell and creating an array of a count of all cells 
 5x5=0.024s
 6x6=0.032s 
 7x7=0.061s
@@ -108,9 +102,21 @@ Adding the count of marked cells to an array seems to be very quick when I do it
 10x10=0.699s
 Clearly this is way better - but we're not placing blocks yet - and we're not calculating clearing them - so there are a number of function which will slow this down. If we virtualise all of them, 
 
-1. automaticBlockPlacer is going to have to be made far more efficient. The current approach grinds to a halt at scale. 
+- processBlockVirtual() - Is working! - it didn't need a setVirtual as it can be done within the function 
 
-2. 
+- Add a way of displaying the virtual board on the real board? I'll do all the virtual stuff in brain.js so that script.js can carry on working independently - no reasons why both things can't work side by side? I could even populate virtualBoard based on the content of the realBoard. 
+
+7. clearVirtual() function created - allows rows and cols to be cleared on the virtual board;
+
+
+
+*************************************************************************************************
+
+to do... 
+
+Adding the count of marked cells to an array seems to be very quick when I do it virtually 
+
+1. make processBlockVirtual not allow overlay/offlay etc... 
 
 I should also look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
 
@@ -128,6 +134,7 @@ Additional stuff to do
 
 6. See this - https://levelup.gitconnected.com/javascript-refactoring-tips-making-functions-clearer-and-cleaner-c568c299cbb2
 
+7. Clear up naming - 'marked', 'mark', 'markCell' etc. 
 
 Things to find out a little more about... 
 1. The 'this' keyword in functions
@@ -137,5 +144,6 @@ Things to find out a little more about...
 5. Should a function ALWAYS explicetly 'return'
 6. I need to figure out the best way to split a project across multiple files - what are modules?! 
 7. Look into codespaces -https://onezero.medium.com/the-future-of-code-is-in-your-browser-2c51a08e8ab2
+8. https://medium.com/better-programming/this-visual-studio-code-shortcut-changed-my-life-f6f18be7b1bb 
 
 

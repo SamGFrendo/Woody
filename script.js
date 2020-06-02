@@ -1,11 +1,11 @@
 
 "use strict";
 
-import {countMarkedCells, automaticBlockPlacerTest} from './brain.js'
+import {countMarkedCells, automaticBlockPlacerTest, processBlockVirtual,blockSelectedVirtual,initVirtualBoard} from './brain.js'
 import {chooseRandomBlock, blocks} from './blocks.js'
 
 
-export let N_SIZE = 10; // I don't know why these are capitalised...? 
+export let N_SIZE = 6; // I don't know why these are capitalised...? 
 export let EMPTY = "&nbsp;"; // I don't know why these are capitalised...? 
 let boxes = [];
 let marker = "X"; // A lot runs based on innerHTML - so I should keep this
@@ -34,6 +34,7 @@ function init() {
             cell.setAttribute('valign', 'center');
             cell.classList.add('col' + j,'row' + i);
             cell.addEventListener("click", processBlock);
+            cell.addEventListener("click", processBlockVirtual);
             cell.addEventListener("click", resetBlockSelector);
             row.appendChild(cell);
             boxes.push(cell); // I'm not sure why I need to push cell to the boxes array here... except it doesn't work if I don't... 
@@ -42,6 +43,7 @@ function init() {
     document.getElementById('tictactoe').appendChild(board);
     startNewGame();
     buildBlockSelector();
+    initVirtualBoard();
     // Putting this in for testing purposes 
     document.getElementById('start-brain').addEventListener('click', automaticBlockPlacerTest);
 }
@@ -68,6 +70,7 @@ function buildBlockSelector() {
         selectBlockImage.className = specificBlock; //className is used to control 
         selectBlockImage.id = 'selector-box-' + i;
         selectBlockImage.addEventListener('click', blockSelected);
+        selectBlockImage.addEventListener('click', blockSelectedVirtual);
 
     };
 };
@@ -153,7 +156,7 @@ export function checkEmpty(colNum, rowNum) {
         return true;
 }
 
-//proceeBlock gets called when a cell on the board is clicked
+//processBlock gets called when a cell on the board is clicked
 function processBlock() {
 
     var clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
