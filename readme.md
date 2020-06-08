@@ -93,20 +93,27 @@ automaticBlockPlacer() calls a number of other functions;
 
 6. I created a virtual board, the idea being that this will be a more efficient way of processing information. - I may need to extend this, so I can use it to populate the 'real' board.
 
-This is the time it takes to iterate through, simply adding 1 to the cell and creating an array of a count of all cells 
+Using the function automaticBlockPlacerVirtual() I can iterate through the virtual board. This is the time it takes to iterate through, simply adding 1 to the cell and creating an array of a count of all cells 
 5x5=0.024s
 6x6=0.032s 
 7x7=0.061s
 8x8=0.128s
 9x9=0.306s
 10x10=0.699s
+
 Clearly this is way better - but we're not placing blocks yet - and we're not calculating clearing them - so there are a number of function which will slow this down. If we virtualise all of them, 
 
 - processBlockVirtual() - Is working! - it didn't need a setVirtual as it can be done within the function 
 
-- Add a way of displaying the virtual board on the real board? I'll do all the virtual stuff in brain.js so that script.js can carry on working independently - no reasons why both things can't work side by side? I could even populate virtualBoard based on the content of the realBoard. 
+7. clearVirtual() function created - allows rows and cols to be cleared on the virtual board. If I add this to the automaticBlockPlacerVirtual how much does it slow things down? 
+5x5=0.135s
+6x6=0.100s 
+7x7=0.132s
+8x8=0.318s
+9x9=0.612s
+10x10=1.609s
+We can see that it does start to negatively impact the speed at which we can iterate through the different combinations. I don't think we need to start to worry just yet - but as we add more and more function I could see this getter very slow. 
 
-7. clearVirtual() function created - allows rows and cols to be cleared on the virtual board;
 
 
 
@@ -114,14 +121,24 @@ Clearly this is way better - but we're not placing blocks yet - and we're not ca
 
 to do... 
 
+1. Use brain.js to place the blocks on the virtual board - add details to the array regarding the count of the cells on the board
+
+- I need to change processBlockVirtual - so that it doesn't just get called on click - It should get called by automaticProcessBlockVirtual
+
+- I will need to display the 'answer' that the brain comes up with, after it has been determined 
+
+
 Adding the count of marked cells to an array seems to be very quick when I do it virtually 
 
-1. make processBlockVirtual not allow overlay/offlay etc... 
 
 I should also look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
 
 
-Additional stuff to do 
+
+
+
+## Additional stuff to do 
+
 1. I should add function descriptions to all of the functions
 
 2. I should replace var with let - check i can do this with no problem 
@@ -145,5 +162,6 @@ Things to find out a little more about...
 6. I need to figure out the best way to split a project across multiple files - what are modules?! 
 7. Look into codespaces -https://onezero.medium.com/the-future-of-code-is-in-your-browser-2c51a08e8ab2
 8. https://medium.com/better-programming/this-visual-studio-code-shortcut-changed-my-life-f6f18be7b1bb 
+9. Hoisting - This tripped me up a couple of times - check it out! 
 
 

@@ -1,7 +1,7 @@
 
 "use strict";
 
-import {countMarkedCells, automaticBlockPlacerTest, processBlockVirtual,blockSelectedVirtual,initVirtualBoard} from './brain.js'
+import {countMarkedCells, startBrain, processBlockVirtual,blockSelectedVirtual,initVirtualBoard} from './brain.js'
 import {chooseRandomBlock, blocks} from './blocks.js'
 
 
@@ -45,7 +45,7 @@ function init() {
     buildBlockSelector();
     initVirtualBoard();
     // Putting this in for testing purposes 
-    document.getElementById('start-brain').addEventListener('click', automaticBlockPlacerTest);
+    document.getElementById('start-brain').addEventListener('click', startBrain);
 }
 
 // New game ************** Sets the 'start' state of the initiliased board
@@ -171,7 +171,6 @@ function processBlock() {
         alert('You need to choose a block');
         return;
     }
-
     // Check if the required cells are empty 
     for (var i = 0; i < block.length; i++) { 
         for (var j = 0; j < block[i].length; j++) {
@@ -183,7 +182,6 @@ function processBlock() {
         row += 1
         col = col - block[0].length // This doesn't seem that eligant 
     }
-
     // If the rquired cells are empty then set them 
     col = clickedCellCol; // Need to reset because of the above line - doesn't feel elegant 
     row = clickedCellRow;
@@ -200,7 +198,7 @@ function processBlock() {
             col = col - block[0].length 
         }
     } else {
-        console.log('Overlay or Offlay detected');
+        console.log('Overlay or Offlay detected in script.js');
         return;
     }
     block = undefined; // Once the block has been set, you need to choose another block 
