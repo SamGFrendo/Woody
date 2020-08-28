@@ -1,11 +1,11 @@
 
 "use strict";
 
-import {countMarkedCells, startBrain, processBlockVirtual,blockSelectedVirtual,initVirtualBoard} from './brain.js'
-import {chooseRandomBlock, blocks} from './blocks.js'
+import { /*countMarkedCells,*/ startBrain, processBlockVirtual, blockSelectedVirtual, initVirtualBoard, auto_BlockSelectedVirtual } from './brain.js'
+import { chooseRandomBlock, blocks } from './blocks.js'
 
 
-export let N_SIZE = 6; // I don't know why these are capitalised...? 
+export let N_SIZE = 3; // I don't know why these are capitalised...? 
 export let EMPTY = "&nbsp;"; // I don't know why these are capitalised...? 
 let boxes = [];
 let marker = "X"; // A lot runs based on innerHTML - so I should keep this
@@ -15,7 +15,7 @@ let clickedBlockSelectorID;
 let block;
 let reset = 0;
 
-// ************** Initialises the board in the UI and calls StartNewGame.
+//********** Initialises the board in the UI and calls StartNewGame
 
 function init() {
 
@@ -32,7 +32,7 @@ function init() {
             cell.setAttribute('width', 40); // Don't forget font-size in css will need to be modified 
             cell.setAttribute('align', 'center');
             cell.setAttribute('valign', 'center');
-            cell.classList.add('col' + j,'row' + i);
+            cell.classList.add('col' + j, 'row' + i);
             cell.addEventListener("click", processBlock);
             cell.addEventListener("click", processBlockVirtual);
             cell.addEventListener("click", resetBlockSelector);
@@ -45,10 +45,11 @@ function init() {
     buildBlockSelector();
     initVirtualBoard();
     // Putting this in for testing purposes 
-    document.getElementById('start-brain').addEventListener('click', startBrain);
+    document.getElementById('start-brain').addEventListener('click', startBrain); // Just commented out for testing
+    //document.getElementById('start-brain').addEventListener('click', automaticBlockSelectedVirtual());
 }
 
-// New game ************** Sets the 'start' state of the initiliased board
+//************** Sets the 'start' state of the initiliased board
 
 function startNewGame() {
     score = 0;
@@ -57,16 +58,16 @@ function startNewGame() {
     });
 }
 
-// In the final version I want to input blocks, but for now I will replicate Woody
 
 // buildBlockSelector() appends the selectBlock <div>
+// In the final version I want to input blocks, but for now I will replicate Woody
 function buildBlockSelector() {
     for (let i = 0; i < 3; i++) {
-        let selectBlockImage = document.createElement('img'); 
+        let selectBlockImage = document.createElement('img');
         let specificBlock = chooseRandomBlock();
 
         document.getElementById('block-selector').appendChild(selectBlockImage)
-        selectBlockImage.src  = `./images/${specificBlock}.png`;
+        selectBlockImage.src = `./images/${specificBlock}.png`;
         selectBlockImage.className = specificBlock; //className is used to control 
         selectBlockImage.id = 'selector-box-' + i;
         selectBlockImage.addEventListener('click', blockSelected);
@@ -75,12 +76,15 @@ function buildBlockSelector() {
     };
 };
 
-function blockSelected() { 
+// Detects with block has been selected
+function blockSelected() {
     let clickedBlock = this.className;
     clickedBlockSelectorID = this.id;
-    block = blocks[clickedBlock]; // This is setting 'block' which gets passed to processBlock() 
+    // blocks is the object in blocks.js which contains all possible blocks
+    block = blocks[clickedBlock]; 
 };
 
+// Once three blocks have been placed, resets block selector with three new random blocks
 function resetBlockSelector() {
     if (reset >= 3) {
         let blockSelector = document.getElementById('block-selector')
@@ -89,11 +93,11 @@ function resetBlockSelector() {
         }
         buildBlockSelector();
         reset = 0;
-        countMarkedCells();
+        //countMarkedCells();
     };
 };
 
-// ******** Check if columns and/or rows should be cleared criteria is met **************
+// ******** Check if columns or rows should be cleared - called every time a block is placed 
 
 function clear(marked) {
     // The column/row of the clicked cell
@@ -101,8 +105,8 @@ function clear(marked) {
     var memberOfRow = marked.className.split(/\s+/)[1];
     // The set of cells in the clicked column/row that have an X marker
     var itemsColumn = contains('.' + memberOfColumn, marker);
-    var itemsRow = contains('.' + memberOfRow, marker); 
-    
+    var itemsRow = contains('.' + memberOfRow, marker);
+
     if (itemsColumn.length == N_SIZE) {
         itemsColumn.forEach(function (square) {
             square.innerHTML = EMPTY; // should change 'square' to 'cell' to be consistent
@@ -112,7 +116,7 @@ function clear(marked) {
     }
     if (itemsRow.length == N_SIZE) {
         itemsRow.forEach(function (square) {
-            square.innerHTML = EMPTY; 
+            square.innerHTML = EMPTY;
             square.setAttribute('id', ''); // css can style background
         });
         score += N_SIZE;
@@ -120,9 +124,10 @@ function clear(marked) {
     return; // Not sure I need return here
 };
 
+// Called by clear() - return set of cells that meet criteria
 function contains(selector, text) {
     var elements = document.querySelectorAll(selector);
-    return [].filter.call(elements, function(element){return RegExp(text).test(element.textContent);});
+    return [].filter.call(elements, function (element) { return RegExp(text).test(element.textContent); });
 };
 
 // Takes two numbers as an input and will return a correctly formatted class string e.g. 'col2 .row3'
@@ -130,30 +135,26 @@ export function classNameString(colNum, rowNum) {
     return '.col' + colNum + '.row' + rowNum;
 };
 
-// ******* Sets cells based on processBlock, updates moves and checks the clear criteria *****
-export function set(colNum, rowNum) { 
+// ******* Sets cells based on processBlock, updates moves and checks the clear criteria 
+export function set(colNum, rowNum) {
     //Use the classNameString() function to complete the cell with the marker
-    var markCell = document.querySelector(classNameString(colNum, rowNum)); 
-    markCell.innerHTML = marker; 
+    var markCell = document.querySelector(classNameString(colNum, rowNum));
+    markCell.innerHTML = marker;
     markCell.setAttribute('id', 'marked'); // css can style background - Not actually sure I need to add an X! 
-    
     clear(markCell); // Every time I mark a cell, check if a column or row should be cleared 
-    
     score += 1;
     document.getElementById('score').textContent = 'Score = ' + score; // Why don't we use innerHTML, instead of text content?
-
-    // Once set has been run block should = undefined 
 }
 
-export function checkEmpty(colNum, rowNum) { 
-    var checkCell = document.querySelector(classNameString(colNum, rowNum)); 
-        if (checkCell == null) {
-            return false;
-        } 
-        if (checkCell.innerHTML !== EMPTY) { //This will error: 'Cannot read property 'innerHTML' of null'
-            return false; // If any of the cells are marked then exit function  
-        }  
-        return true;
+export function checkEmpty(colNum, rowNum) {
+    var checkCell = document.querySelector(classNameString(colNum, rowNum));
+    if (checkCell == null) {
+        return false;
+    }
+    if (checkCell.innerHTML !== EMPTY) { //This will error: 'Cannot read property 'innerHTML' of null'
+        return false; // If any of the cells are marked then exit function  
+    }
+    return true;
 }
 
 //processBlock gets called when a cell on the board is clicked
@@ -161,7 +162,7 @@ function processBlock() {
 
     var clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
     var clickedCellRow = parseInt(this.className.substring(8, 9));
-    
+
     var col = clickedCellCol // Sort out this descrepancy later 
     var row = clickedCellRow // Sort out this descrepancy later 
     var checkFalse = []; // Used to determine if checkEmpty ever returns 'false' 
@@ -172,12 +173,12 @@ function processBlock() {
         return;
     }
     // Check if the required cells are empty 
-    for (var i = 0; i < block.length; i++) { 
+    for (var i = 0; i < block.length; i++) {
         for (var j = 0; j < block[i].length; j++) {
             if (block[i][j] == 1) {
-                checkFalse.push(checkEmpty(col, row));  
+                checkFalse.push(checkEmpty(col, row));
             }
-            col += 1; 
+            col += 1;
         }
         row += 1
         col = col - block[0].length // This doesn't seem that eligant 
@@ -187,15 +188,15 @@ function processBlock() {
     row = clickedCellRow;
 
     if (checkFalse.every(Boolean)) {
-        for (var i = 0; i < block.length; i++) { 
+        for (var i = 0; i < block.length; i++) {
             for (var j = 0; j < block[i].length; j++) {
                 if (block[i][j] == 1) {
                     set(col, row);
                 }
-                col += 1; 
+                col += 1;
             }
             row += 1
-            col = col - block[0].length 
+            col = col - block[0].length
         }
     } else {
         console.log('Overlay or Offlay detected in script.js');
@@ -209,7 +210,5 @@ function processBlock() {
     reset += 1;
     return;
 }
-
-
 
 init();

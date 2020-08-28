@@ -4,7 +4,7 @@
 
 https://guides.github.com/features/mastering-markdown/
 
-Origin of the TicTacToe game - https://codepen.io/vasanthkay/pen/KVzYzG. 
+Origin of the TicTacToe game - https://codepen.io/vasanthkay/pen/KVzYzG
 
 I wanted to see if I could take this code, unpick the logic and then use it as the start of a coding project to determine 'a perfect game' in Woody. 
 
@@ -17,7 +17,7 @@ All code is contained within 5 functions;
 - contains()
 - set()
 
-The function init() get called when the code is run. init() is then calls startNewGame(). When it is called itit() applies the different sets of classes to the cells. In this way the code understands the relationship between cells - this is how it determines the win criteria. 
+The function init() get called when the code is run. init() then calls startNewGame(). When it is called itit() applies the different sets of classes to the cells. These classes are what the code uses to understand the relationship between cells - this is how it determines the win criteria. 
 
 The function set() is called whenever a cell is clicked. The set() functions calls the win() function on each click to determine if the win criteria have been met. The set() function also sets a cell with the turn marker, 'X' or 'O'.  
 
@@ -94,12 +94,12 @@ automaticBlockPlacer() calls a number of other functions;
 6. I created a virtual board, the idea being that this will be a more efficient way of processing information. - I may need to extend this, so I can use it to populate the 'real' board.
 
 Using the function automaticBlockPlacerVirtual() I can iterate through the virtual board. This is the time it takes to iterate through, simply adding 1 to the cell and creating an array of a count of all cells 
-5x5=0.024s
-6x6=0.032s 
-7x7=0.061s
-8x8=0.128s
-9x9=0.306s
-10x10=0.699s
+- 5x5=0.024s
+- 6x6=0.032s 
+- 7x7=0.061s
+- 8x8=0.128s
+- 9x9=0.306s
+- 10x10=0.699s
 
 Clearly this is way better - but we're not placing blocks yet - and we're not calculating clearing them - so there are a number of function which will slow this down. If we virtualise all of them, 
 
@@ -114,18 +114,24 @@ Clearly this is way better - but we're not placing blocks yet - and we're not ca
 10x10=1.609s
 We can see that it does start to negatively impact the speed at which we can iterate through the different combinations. I don't think we need to start to worry just yet - but as we add more and more function I could see this getter very slow. 
 
+I think this is probably a dumb way of doing things - we can just moved between a live and shadow board... resetting to the previous state in this way
 
+8. Finally got auto_ProcessBlockVirtual() working with the help of Andy B. The trick was to call all of the functions within the final loop of the next loop. It's easy when you know how. 
 
 
 *************************************************************************************************
 
 to do... 
 
-1. Use brain.js to place the blocks on the virtual board - add details to the array regarding the count of the cells on the board
+- Use brain.js to place the blocks on the virtual board - add details to the array regarding the count of the cells on the board
 
-- I need to change processBlockVirtual - so that it doesn't just get called on click - It should get called by automaticProcessBlockVirtual
+- I will need to display the 'answer' that the brain comes up with, after it has been determined
 
-- I will need to display the 'answer' that the brain comes up with, after it has been determined 
+- I had a lot of trouble logging the array as it got processed. I finally cracked this by using JSON.stringify. I need to learn more about how arrays function in js. I think I was running in to trouble, as it was only processing/returning the final iteration of the array. Arrays are mutable? Something like this perhaps... need to research. 
+
+- I'm currently having a crack at getting JSON.parse and JSON.stringify to play nicely together 
+
+
 
 
 Adding the count of marked cells to an array seems to be very quick when I do it virtually 
@@ -133,7 +139,8 @@ Adding the count of marked cells to an array seems to be very quick when I do it
 
 I should also look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
 
-
+You can also speed up for loop: allocate array with 1M elements and in for loop assign values.
+https://dev.to/henryjw/array-map-much-slower-than-for-loop-57if
 
 
 

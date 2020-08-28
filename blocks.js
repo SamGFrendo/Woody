@@ -4,7 +4,7 @@
 
 export {chooseRandomBlock, blocks, createVirtualBoard}
 
-// This successfully creates 10x10 2D array populated with zeros 
+// This successfully creates NxN 2D array populated with zeros 
 function createVirtualBoard(boardSize) {
     
     let virtualBoard = new Array(boardSize); 

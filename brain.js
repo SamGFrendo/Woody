@@ -2,68 +2,55 @@
 "use strict";
 
 // importing block means it is immutable... should just move some functions across
-import {set, checkEmpty, N_SIZE, EMPTY, classNameString} from './script.js'
+import {N_SIZE} from './script.js'
 import {blocks, createVirtualBoard} from './blocks.js'
 
 
-let couldBlockBePlaced = false; // assume false, then switch to true 
-let selectorId = 0; // Allows iteration through the different cells
-let clickedBlockSelectorID;
-let brainBlock; // Current mirrors 'block' used in script.js
-let virtualBoard; // I think I might have to do this globally 
+let brainBlock; // Mirrors 'block' used in script.js
+let virtualBoard; // This get created by the init() function in script.js
+let arrVirtualBoard = [];
 
-export function initVirtualBoard() {
-    virtualBoard = createVirtualBoard(N_SIZE);
+// This gets called when I click 'start BRAIN' 
+export function startBrain() {
+    auto_BlockPlacerVirtual(); // When I get rid of this it goes back to being fine - functions get hoisted 
+    let result
+
+    /*
+    result = arrVirtualBoard.forEach (function (element){
+        JSON.parse(element);
+    });
+    */
+    console.log (result); // I REALLY WANT TO SEE THE BOARDS AS THEY ARE ITERATING - AND I CAN'T FOR THE LOVE
+    console.log (arrVirtualBoard);
+    // can I JSON.parse the array string? This works! stringify proves it's working!!! Yeeee! 
+    // Fucking stringify! I don't get it - I think arrays are mutable objects, so wierd shit was happening! 
+    // OF GOD FIGURE OUT WHY I CAN'T! 
+
+}
+
+// I need to automatically set brainBlock, so that I can use to iterate through...
+// Do this later when I have auto_BlockPlacerVirtual() working 
+export function auto_BlockSelectedVirtual() {
+
+    for (let i = 0; i < 3; i++) {
+        // Yep - I should be able to pull the class from this - and do some fancyness to set an array to let automaticBrainBlock = [];
+        console.log(document.getElementById(`selector-box-${i}`));
+    };
 };
 
-// countMarkedCells() is called after each turn (e.g. three moves)
-// This doesn't work when I'm using the automaticBlockPlacer
-// Think I might need to get rid of this function 
-export function countMarkedCells() {
-    let elements = document.querySelectorAll('td');
-    let countMarked = [].filter.call(elements, function(element){return RegExp('X').test(element.textContent);}).length;
-    return countMarked;
-};
-
-// This is setting the brainBlock - the brain.js version of 'block' 
-export function blockSelectedVirtual() { 
-    let clickedBlock = this.className;
-    clickedBlockSelectorID = this.id;
-    brainBlock = blocks[clickedBlock]; // This is setting 'brainBlock' which gets passed to processBlockVirtual() 
-};
-
-function countMarkedCellsVirtual(arr) {
+function countMarkedCellsVirtual(arr) { // The array received is the 2D virtualBoard array 
     let sumOfCells = 0;
     for (let i = 0; i < arr.length; i++) {
         arr[i].forEach (function (element) {
-            sumOfCells = sumOfCells + element; // can put += here
+            sumOfCells += element; 
         });
     }
     return sumOfCells;
 };
 
-// I will need to clearAllCells virtual - 
-// This can perhaps be acheived by just resetting virtualBoard to "[[0,0]]""
-function clearAllCells() {
-    //console.log('clearAllCells() called');
-    for (let i = 0; i < N_SIZE; i++) {
-        for (let j = 0; j < N_SIZE; j++) {
-            // I needed to change the innerHTML and the Attribute so that the background changes! 
-            document.querySelector(classNameString(i, j)).innerHTML = EMPTY;
-            document.querySelector(classNameString(i, j)).setAttribute('id', '');
-        };
-    };    
-};
 
-// This might not be needed - but creates a virtualBoard and kicks things off - could refactor later
-export function startBrain() {
-    let virtualBoard = createVirtualBoard(N_SIZE);
-    countMarkedCellsVirtual(virtualBoard);
-    automaticBlockPlacerVirtual(virtualBoard);
-}
+// Placing the cells, then calculating whether or not it was a good move, should also be separated out
 
-// I should make a variation of automaticBlockPlacer() that interacts with the virtual board
-// I can use this to test using a different approach to .push() and also test the speed
 
 // Programatically places all of the block combinations 
 // Needs to to do 0,1,2 - 0,2,1 - 1,2,0 - 1,0,2 - 2,1,0 - 2,0,1
@@ -71,31 +58,76 @@ export function startBrain() {
 // I should remove the concept of 'can place' I should just iterate through all variations
 // keep track of 'score' or 'invalid' 
 
-// automaticBlockPlacerVirtual() is called when [Start BRAIN] is clicked
-function automaticBlockPlacerVirtual(virtualBoard) {
-    //var t0 = performance.now()  
-
-    console.log('automaticBlockPlacerVirtual() called');
-    // console.log(virtualBoard);
-    let arrCountMarkedCells = [];
+// automaticBlockPlacerVirtual() is called when [Start BRAIN] is clicked - via the startBrain() function
+// It is causing the virtualBoard to get marked in unusual ways 
+function auto_BlockPlacerVirtual() { // I DIDN'T EVEN NEED TO PASSED virtualBoard!!
     
-    for (let i = 0; i < N_SIZE; i++) {
-        for (let j = 0; j < N_SIZE; j++) {
-            //virtualBoard[i][j] = 1;
-            processBlockVirtual(i,j);
-                    
-            for (let k = 0; k < N_SIZE; k++) {
-                for (let l = 0; l < N_SIZE; l++) {
-                    virtualBoard[k][l] = virtualBoard[k][l] + 1;
+    //var t0 = performance.now()  
+    let arrCountMarkedCells = [];
+    let arrCountMarkedCellsTriplet = [];
+    let auto_virtualBoard = createVirtualBoard(N_SIZE);
 
+
+    for (let i = 0; i < N_SIZE; i++) {
+        for (let j = 0; j < N_SIZE; j++) {           
+            for (let k = 0; k < N_SIZE; k++) {
+                for (let l = 0; l < N_SIZE; l++) {                   
                     for (let m = 0; m < N_SIZE; m++) {
                         for (let n = 0; n < N_SIZE; n++) {
-                        
-                        //This should just change the value 
-                        virtualBoard[m][n] = virtualBoard[m][n] + 1;
-                        
-                        
-                        arrCountMarkedCells.push(countMarkedCellsVirtual(virtualBoard));
+                            // I could definitely make this logic more efficient - but let's brute force it for now... 
+                            if (auto_ProcessBlockVirtual(i, j, 'block1', auto_virtualBoard)){ // returns true if block can be placed
+                                arrCountMarkedCellsTriplet.push(countMarkedCellsVirtual(auto_virtualBoard));
+                                arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); 
+                                // For some bloody reason stringify is working!! 
+                            } else { // returns false if the block cannot be placed
+                                arrCountMarkedCellsTriplet.push(null);
+                                arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); 
+                            }
+                            if (auto_ProcessBlockVirtual(k, l, 'block2', auto_virtualBoard)){
+                                arrCountMarkedCellsTriplet.push(countMarkedCellsVirtual(auto_virtualBoard));
+                                arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); 
+                            } else {
+                                arrCountMarkedCellsTriplet.push(null);
+                                arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); 
+                            }
+                            if (auto_ProcessBlockVirtual(m, n, 'block3', auto_virtualBoard)){
+                                arrCountMarkedCellsTriplet.push(countMarkedCellsVirtual(auto_virtualBoard));
+                                arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); 
+                            } else {
+                                arrCountMarkedCellsTriplet.push(null);
+                                arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); 
+                                
+                            }
+                            
+                            // It does seem the above logic is sound
+                            // Each triplet represents the placement of three blocks
+
+                            /*
+                            I've figured out what the problem is using the virtualBoard... 
+                            It is used in this automaticProcess, but this automatic process, also calls upon non-automatic functions
+                            This means that it is set as a global variable, which causes all sorts of issues
+                            I need to create automatic versions of each of the check functions etc. (This will allow the virtualBoard to still
+                                be updated by interacting with the 'real' board)
+
+                            I should probably try and make it so it isn't a global variable, but rather gets passed between functions
+                            That way I (hopefully won't get these wierd console.log behaviour)
+                            */
+
+                            arrCountMarkedCells.push(arrCountMarkedCellsTriplet);
+                            arrCountMarkedCellsTriplet = [];     
+                            JSON.stringify(arrVirtualBoard);
+
+                            // I think this nukes everything because we're calling it at the wrong place
+                            // The functions that get called get run first 
+                            // virtualBoard = createVirtualBoard(N_SIZE); // Putting this in just nukes everythin after the first iteration
+
+
+                        //console.log('clear here'); I would want to countMarkedCellsVirtual, and then clear virtual board
+                        //Initial clear can just wipe, but in reality I want to go back to to the virtual board in the previous state 
+                        //Live/Shadow
+
+
+
                         /*
                         var r = confirm("Press a button!");
                             if (r == true) {
@@ -110,55 +142,55 @@ function automaticBlockPlacerVirtual(virtualBoard) {
             };    
         };
     }; 
-    console.log('Array of countMarkedCells after all placed= ', arrCountMarkedCells);
-
+    console.log('Array of countMarkedCells after function runs = ', arrCountMarkedCells);
+    
+    //JSON.stringify(arrVirtualBoard);
     // var t1 = performance.now()
     // console.log("Run through automaticBlockPlacer took " + (t1 - t0) + " milliseconds.")
 };
-    
-// You can also speed up for loop: allocate array with 1M elements and in for loop assign values.
-// https://dev.to/henryjw/array-map-much-slower-than-for-loop-57if
 
 
-// I think this function might become redundant / need to change once we move to virtualising things 
-// This was linked up to automaticBlockPlacer - but that has now been virtualised
-// procesBlockVirtual - can be changed to be automatic 
-function automaticProcessBlock(colIndex,rowIndex) {
+// This gets called by automaticBlockPlacerVirtual 
+// but brainBlock is undefined at this stage (because nothing has been clicked/set from script.js/DOM - I need to do this virtually)
+function auto_ProcessBlockVirtual(colIndex, rowIndex, block, auto_virtualBoard) {
+
 
     //console.log('automaticProcessBlock= ', block);
-    var col = colIndex; 
-    var row = rowIndex;
+    let col = colIndex; 
+    let row = rowIndex;
+    let checkFalse = []; // Used to determine if checkEmpty ever returns 'false' 
+    let brainBlock = blocks.squareOne;
 
-    var checkFalse = []; // Used to determine if checkEmpty() ever returns 'false' 
+    console.log('col = ', col, 'row = ', row, block) 
 
-    if (brainBlock == undefined) {
-        alert('You need to choose a block');
+    if (brainBlock == undefined) { 
+        // alert('You need to choose a block'); // processBlock creates the alert 
         return;
     }
-    
 
-    // ** Check if the required cells are empty **
+    // Check if the required cells are empty, so that block can be placed
     for (var i = 0; i < brainBlock.length; i++) { 
         for (var j = 0; j < brainBlock[i].length; j++) {
             if (brainBlock[i][j] == 1) {
-                checkFalse.push(checkEmpty(col, row));
+                checkFalse.push(auto_checkEmptyVirtual(col, row, auto_virtualBoard)); //checkEmpltyVirtual is just returning true OR false  
             }
             col += 1; 
         }
         row += 1
-        col = col - brainBlock[0].length  
+        col = col - brainBlock[0].length // This doesn't seem that eligant 
     }
-
-    // ** If the rquired cells are empty then set them **
-    col = colIndex;
+    
+    // If the required cells are empty then set them 
+    col = colIndex; // Need to reset because of the above - this doesn't feel elegant 
     row = rowIndex;
 
-    if (checkFalse.every(Boolean)) {
+    if (checkFalse.every(Boolean)) { //If checkFalse array is true for all of them, then we can place the block 
         for (var i = 0; i < brainBlock.length; i++) { 
             for (var j = 0; j < brainBlock[i].length; j++) {
                 if (brainBlock[i][j] == 1) {
-                    set(col, row); 
-                    couldBlockBePlaced = true;
+                    // This fails is there is offlay 
+                    auto_virtualBoard[row][col] = 1; // This sets the value of the array based on brainBlock
+                    auto_clearVirtual(row, col, auto_virtualBoard); // This sees if any columns should be cleared 
                 }
                 col += 1; 
             }
@@ -166,16 +198,98 @@ function automaticProcessBlock(colIndex,rowIndex) {
             col = col - brainBlock[0].length 
         }
     } else {
-        //console.log('Overlay or Offlay detected');
-        couldBlockBePlaced = false;
-        return;
+
+        //console.log('Overlay or Offlay detected in brain.js');
+
+
+        return false;
+
+
+    };
+    //brainBlock = undefined; // When I import the block it becomes immutable! // This is needed for setting blocks on the real board
+
+
+    return true;
+
+
+};
+
+
+
+
+
+function auto_checkEmptyVirtual(checkRow, checkCol, auto_virtualBoard) {
+    if (checkRow >= N_SIZE || checkCol >= N_SIZE) {
+        return false;
+    };
+    if (auto_virtualBoard[checkCol][checkRow] !== 0) { 
+        return false;
+    };  
+    return true;
+};
+
+
+function auto_clearVirtual(checkRow, checkCol, auto_virtualBoard) {
+    let sumOfRow = 0;
+    let sumOfCol = 0;
+    let colArray = [];
+    // Clear row if it is full
+    auto_virtualBoard[checkRow].forEach (function (element) {
+        sumOfRow += element;  
+    });
+    if (sumOfRow == N_SIZE) {
+        for (let i = 0; i < N_SIZE; i++) {
+            auto_virtualBoard[checkRow][i] = 0;
+        };
     }
-    return;
-}
+    // Clear col if it is full 
+    for (let i = 0; i < N_SIZE; i++) {
+        colArray.push(auto_virtualBoard[i][checkCol]);
+    };
+    colArray.forEach (function (element) {
+        sumOfCol += element;
+    });
+    if (sumOfCol == N_SIZE) {
+        for (let i = 0; i < N_SIZE; i++) {
+            auto_virtualBoard[i][checkCol] = 0;
+        };
+    };
+
+    /*
+    We will want to create a virtual score - as well as the real score 
+    */
+};
 
 
 
-// processBlockVirtual() gets called when a cell is clicked 
+
+
+
+
+
+
+
+
+
+
+//************ From this point down we're simply replicating the html board on the virtual board ***************/
+//************************************************************************************************************ */
+
+// This gets called by init() in script.js
+export function initVirtualBoard() {
+    virtualBoard = createVirtualBoard(N_SIZE);
+};
+
+// This gets called when selectBlockImage is clicked
+export function blockSelectedVirtual() { 
+    let clickedBlock = this.className;
+    clickedBlockSelectorID = this.id;
+    brainBlock = blocks[clickedBlock]; // This is setting 'brainBlock' which gets passed to processBlockVirtual() 
+};
+
+// processBlockVirtual() gets called when a cell is clicked (it is also copied as 'automaticProcessBlockVirtual')
+// It is the 'virtual' equivalent of processBlock
+// This places a block on the Virtual board
 export function processBlockVirtual() {
 
     let clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
@@ -187,7 +301,7 @@ export function processBlockVirtual() {
     // maybe check block isn't undefined and then catch the error
 
     if (brainBlock == undefined) { 
-        // alert('You need to choose a block'); processBlock creates the alert 
+        // alert('You need to choose a block'); // processBlock creates the alert, so I don't need to do it here 
         return;
     }
 
@@ -208,7 +322,7 @@ export function processBlockVirtual() {
     col = clickedCellCol; // Need to reset because of the above line - doesn't feel elegant 
     row = clickedCellRow;
 
-    if (checkFalse.every(Boolean)) { // update this later - currently not calling checkEmpty
+    if (checkFalse.every(Boolean)) { 
         for (var i = 0; i < brainBlock.length; i++) { 
             for (var j = 0; j < brainBlock[i].length; j++) {
                 if (brainBlock[i][j] == 1) {
@@ -227,11 +341,12 @@ export function processBlockVirtual() {
     }
     brainBlock = undefined; // When I import the block it becomes immutable! 
 
-    console.log('processBlockVirtual logs virtualBoard ', virtualBoard);
+    console.log('virtualBoard logged by processBlockVirtual() = ', virtualBoard);
     // call a function to set the real board - at some point  
 
     return;
 };
+
 
 function checkEmptyVirtual(checkRow, checkCol) {
     if (checkRow >= N_SIZE || checkCol >= N_SIZE) {
@@ -244,7 +359,8 @@ function checkEmptyVirtual(checkRow, checkCol) {
 };
 
 
-
+// clearVirtual clears the Rows or Columns if they are full... 
+// It get called from processBlockVirtual & automaticProcessBlockVirtual
 function clearVirtual(checkRow, checkCol) {
     let sumOfRow = 0;
     let sumOfCol = 0;

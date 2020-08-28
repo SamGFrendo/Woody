@@ -25,6 +25,7 @@ function init() {
             cell.setAttribute('width', 120);
             cell.setAttribute('align', 'center');
             cell.setAttribute('valign', 'center');
+            cell.setAttribute('id', 'table0');
             cell.classList.add('col' + j,'row' + i);
                 if (i == j) {
                     cell.classList.add('diagonal0');
@@ -37,7 +38,7 @@ function init() {
             boxes.push(cell);
         }
     }
-    document.getElementById("tictactoe").appendChild(board);
+    document.getElementById("tictactoe-0").appendChild(board);
     startNewGame();
 }
 
@@ -58,7 +59,7 @@ function win(clicked) {
     var memberOf = clicked.className.split(/\s+/);
     for (var i = 0; i < memberOf.length; i++) {
         var testClass = '.' + memberOf[i];        
-        var items = contains('#tictactoe ' + testClass, turn);
+        var items = contains('#tictactoe-0 ' + testClass, turn);
         // winning condition: turn == N_SIZE
         if (items.length == N_SIZE) {
             return true;
