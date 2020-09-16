@@ -57,6 +57,8 @@ function chooseRandomBlock() {
 
 /* Sqaures *****************/ 
 
+// Hmmm. I don't need to add codes... I've got the names already. I'm pretty sure I know how to access these!
+
 let blocks = {
     
 // 1x1 square

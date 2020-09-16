@@ -5,7 +5,7 @@ import { /*countMarkedCells,*/ startBrain, processBlockVirtual, blockSelectedVir
 import { chooseRandomBlock, blocks } from './blocks.js'
 
 
-export let N_SIZE = 3; // I don't know why these are capitalised...? 
+export let N_SIZE = 5; // I don't know why these are capitalised...? 
 export let EMPTY = "&nbsp;"; // I don't know why these are capitalised...? 
 let boxes = [];
 let marker = "X"; // A lot runs based on innerHTML - so I should keep this
@@ -44,9 +44,9 @@ function init() {
     startNewGame();
     buildBlockSelector();
     initVirtualBoard();
-    // Putting this in for testing purposes 
-    document.getElementById('start-brain').addEventListener('click', startBrain); // Just commented out for testing
-    //document.getElementById('start-brain').addEventListener('click', automaticBlockSelectedVirtual());
+    // This allows us to access the functions in 'brain' by clicking 'start Brain' 
+    document.getElementById('start-brain').addEventListener('click', startBrain);
+
 }
 
 //************** Sets the 'start' state of the initiliased board

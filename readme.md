@@ -118,18 +118,38 @@ I think this is probably a dumb way of doing things - we can just moved between 
 
 8. Finally got auto_ProcessBlockVirtual() working with the help of Andy B. The trick was to call all of the functions within the final loop of the next loop. It's easy when you know how. 
 
+Another thing I got stuck on was console logging the array - It kept just going to the last iteration all the way along. I wonder if this is perhaps something along the lines of 'assigned by value' vs 'assigned by position'. I used 
+
+9. A bunch of new arrays got things going. 
 
 *************************************************************************************************
 
 to do... 
 
 - Use brain.js to place the blocks on the virtual board - add details to the array regarding the count of the cells on the board
+- - I'm currently only placing a single square block - I need to be able to pull what the blocks are from the DOM and place these
+- - Or, should I work on the counting highest score, and pulling out relevant results first... I think this would be easier to do while using 'place single blocks' approach. 
+
+
+
+I need to convert array 1 (score), which I've created below, it to an array that only contains
+1 element for every 3 - This should be 'null' = that move didn't count, or X = the LAST score from that triplet - This is the score when all blocks are placed (we come to different orders of blocks later). 
+Yep, two arrays (one with moves), on with null or last score, THEN find the one with the lowest score 
+
+I'VE CREATED THE TWO ARRAYS. NOW I NEED TO FIGURE OUT HOW TO PULL OUT THE MOVES WITH THE LOWEST SCORE... 
+By storing an array of moves, I hope to be able to progressively iterate through them in stages, wittling them down to the best move. To begin with I will just take the 
+
+I've learned that - Math.min is a recursive function and crashes on large arrays 
+
+"Function calls are expensive, therefore with really big arrays a simple loop will perform much better than findIndex:"
+https://stackoverflow.com/questions/15997879/get-the-index-of-the-object-inside-an-array-matching-a-condition
+
 
 - I will need to display the 'answer' that the brain comes up with, after it has been determined
 
 - I had a lot of trouble logging the array as it got processed. I finally cracked this by using JSON.stringify. I need to learn more about how arrays function in js. I think I was running in to trouble, as it was only processing/returning the final iteration of the array. Arrays are mutable? Something like this perhaps... need to research. 
 
-- I'm currently having a crack at getting JSON.parse and JSON.stringify to play nicely together 
+
 
 
 
