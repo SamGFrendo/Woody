@@ -8,16 +8,26 @@ import {blocks, createVirtualBoard} from './blocks.js'
 
 let brainBlock; // Mirrors 'block' used in script.js
 let virtualBoard; // This get created by the init() function in script.js
-let arrVirtualBoard = [];
+let arrVirtualBoard = []; // Use for testing purposes, so I can what the virtual board actually looks like
 
 
 // This gets called when I click 'start BRAIN' 
 export function startBrain() {
     
-    let seeVirtualBoard;   
+    let seeVirtualBoard; // testing purposes - don't delete (yet)
     
-    auto_BlockPlacerVirtual();
+    // before calling auto_BlockPlacerVirutal(), I should call auto_BlockSelectedVirtual
+    // I should find out what blocks there are on the board, pass them up to this function
+    // and then pass then down to auto_BlockPlacerVirtual(block1,block2,block3)
+    // they can be passed from there, straight into auto_ProcessBlockVirtual
 
+    let arrBlockSelected = auto_BlockSelectedVirtual();
+    //console.log(arrBlockSelected);
+
+    auto_BlockPlacerVirtual(arrBlockSelected);
+    
+    
+    
     /*
     // I created this variable to allow me parse arrVirtualBoard, which is stringified in auto_BlockPlacerVirtual()
     // this is only for testing purposes and can be commented out when not required 
@@ -31,10 +41,15 @@ export function startBrain() {
 // Do this later when I have auto_BlockPlacerVirtual() working 
 export function auto_BlockSelectedVirtual() {
 
+    let arrBlockSelected = [];
     for (let i = 0; i < 3; i++) {
         // Yep - I should be able to pull the class from this - and do some fancyness to set an array to let automaticBrainBlock = [];
-        console.log(document.getElementById(`selector-box-${i}`));
+        let blockSelected = document.getElementById(`selector-box-${i}`).className
+        //console.log(blockSelected);
+        arrBlockSelected.push(blockSelected);
     };
+    //console.log(arrBlockSelected);
+    return arrBlockSelected;
 };
 
 function countMarkedCellsVirtual(arr) { // The array received is the 2D virtualBoard array 
@@ -50,20 +65,44 @@ function countMarkedCellsVirtual(arr) { // The array received is the 2D virtualB
 
 // Placing the cells, then calculating whether or not it was a good move, should also be separated out
 
-
 // Programatically places all of the block combinations 
 // Needs to to do 0,1,2 - 0,2,1 - 1,2,0 - 1,0,2 - 2,1,0 - 2,0,1
 // I can acheive the above with an array / object? 
 // I should remove the concept of 'can place' I should just iterate through all variations
 // keep track of 'score' or 'invalid' 
 
-// automaticBlockPlacerVirtual() is called when [Start BRAIN] is clicked - via the startBrain() function
-// It is causing the virtualBoard to get marked in unusual ways 
-function auto_BlockPlacerVirtual() { // I DIDN'T EVEN NEED TO PASSED virtualBoard!!
+function auto_BlockPlacerVirtual(arr) { 
     
     //var t0 = performance.now()  
 
-    let auto_virtualBoard = createVirtualBoard(N_SIZE);
+    // I should create a new variable that receives the array of blocks selected 
+    // I think I meant this to be able to shift through combinations of boxes... 
+    // possibly sandwich a function in between this one and startBrain()
+    let arrBlockSelected = arr;
+    console.log(arrBlockSelected);
+    let block1 = arrBlockSelected[0];
+    let block2 = arrBlockSelected[1];
+    let block3 = arrBlockSelected[2];
+    console.log(block1, block2, block3); 
+
+    // We pass auto_virtualBoard to all the functions... it is set to blank every time 'brain' is run
+    // What I need to do is make it so that when I click 'start brain' I let auto_virtualBoard = the existing setup
+    // I need a way of creating an array (like createVirtualBoard) which actually creates the array from the existing state in the html
+    // I currently create the virtual board in the 'blocks' file, so I should probably just do it there... 
+    // CAN I JUST MAKE IT EQUAL VIRTUAL BOARD
+
+
+    ///let auto_virtualBoard = createVirtualBoard(N_SIZE);
+    let auto_virtualBoard = virtualBoard;
+    // auto_virtualBoard is being updated with virtualBoard... it is just wrong at this point
+    console.log('Virtual board is', JSON.stringify(virtualBoard)); //'auto is ', JSON.stringify(auto_virtualBoard))
+    // When I can visualise the virtual board I can see it is updating - but it seems to be updating
+    // Incorrectly - Maky it is correct, but then being ignored for some reason? 
+
+    // This doesn't work either - but it's weird because I don't see why not
+    // virtualBoard is an array representing the state of the board - it is returning nonsense when I run startBrain() twice 
+
+
     let arrCountMarkedCells = [];
     let arrCountMarkedCellsTriplet = [];
     let arrMove = [];
@@ -77,39 +116,34 @@ function auto_BlockPlacerVirtual() { // I DIDN'T EVEN NEED TO PASSED virtualBoar
                     for (let m = 0; m < N_SIZE; m++) {
                         for (let n = 0; n < N_SIZE; n++) {
                             // I could definitely make this logic more efficient - but let's brute force it for now... 
-                            if (auto_ProcessBlockVirtual(i, j, 'block1', auto_virtualBoard)){ // returns true if block can be placed
-
-                                // I need to create array of all moves 
-                                // New triplet, inlcude 'shape, x, y - 'which would be the i-n value below - sub in 'block1', and I can can code this out later... 
-                                arrMoveTriplet.push(i,j,'block1');
+                            if (auto_ProcessBlockVirtual(i, j, block1, auto_virtualBoard)){ // returns true if block can be placed
+                                arrMoveTriplet.push(i, j, block1);
                                 arrCountMarkedCellsTriplet.push(countMarkedCellsVirtual(auto_virtualBoard));
                                 // arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); // For testing purposes only 
                             } else { // function will have returned false if the block cannot be placed
-                                arrMoveTriplet.push(i,j,'block1'); // sure I won't have to do this in the final one
+                                arrMoveTriplet.push(i, j, block1); // sure I won't have to do this in the final one
                                 arrCountMarkedCellsTriplet.push(null);
                                 //arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); // For testing purposes only 
                             }
-                            if (auto_ProcessBlockVirtual(k, l, 'block2', auto_virtualBoard)){
-                                arrMoveTriplet.push(k,l,'block2');
+                            if (auto_ProcessBlockVirtual(k, l, block2, auto_virtualBoard)){
+                                arrMoveTriplet.push(k ,l ,block2);
                                 arrCountMarkedCellsTriplet.push(countMarkedCellsVirtual(auto_virtualBoard));
                                 //arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); // For testing purposes only 
                             } else {
-                                arrMoveTriplet.push(k,l,'block2');
+                                arrMoveTriplet.push(k, l, block2);
                                 arrCountMarkedCellsTriplet.push(null);
                                 //arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); // For testing purposes only 
                             }
-                            if (auto_ProcessBlockVirtual(m, n, 'block3', auto_virtualBoard)){
-                                arrMoveTriplet.push(m,n,'block3');
+                            if (auto_ProcessBlockVirtual(m, n, block3, auto_virtualBoard)){
+                                arrMoveTriplet.push(m, n, block3);
                                 arrCountMarkedCellsTriplet.push(countMarkedCellsVirtual(auto_virtualBoard));
                                 //arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); // For testing purposes only 
                             } else {
-                                arrMoveTriplet.push(m,n,'block3');
+                                arrMoveTriplet.push(m, n, block3);
                                 arrCountMarkedCellsTriplet.push(null);
                                 //arrVirtualBoard.push(JSON.stringify(auto_virtualBoard)); // For testing purposes only 
                                 
                             }
-
-                            // I WANT TO ADD THE INDEX TO TO THE TRIPLET ARRAY - If I add something to arrCountMarkedCells.push, things go funny
 
                             // Add the triplet (e.g. 3 block move) to the array 
                             arrCountMarkedCells.push(arrCountMarkedCellsTriplet);
@@ -124,49 +158,32 @@ function auto_BlockPlacerVirtual() { // I DIDN'T EVEN NEED TO PASSED virtualBoar
                              auto_virtualBoard = createVirtualBoard(N_SIZE); 
                             // Initial clear can just wipe, but in reality I want to go back to to 
                             // the virtual board in the previous state (E.g. live/Shadow)
-
-
-
-
-
-                        /*
-                        var r = confirm("Press a button!");
-                            if (r == true) {
-                                console.log("You pressed OK!");
-                            } else {
-                                return;
+                            
+                            /*
+                            var r = confirm("Press a button!");
+                                if (r == true) {
+                                    console.log("You pressed OK!");
+                                } else {
+                                    return;
                             }  
-                        */                                                                       
+                            */                                                                       
                         };
                     };
                 };
             };    
         };
     }; 
-    // Array of countMarkedCells is triplets representing the total count of marked cells after 
+
+    // arrCountMarkedCells is triplets representing the total count of marked cells after 
     // each block is placed. If the block can't be placed a 'null' is registered 
     console.log('Array of countMarkedCells after function runs = ', arrCountMarkedCells);
-    console.log('Array of Move = ', arrMove);
-    // Would be great if I could pull out array triplets that had no nulls 
-    // I think I might need to do some 'array map' stuff 
-
-    // This is working nicely, but it only returns the first element that meets the criteria 
-    // I also need to get it to return the element index 
-    // filter() instead of find() works great, but now I'm loosing track of the iteration... I think I need to add the index to the array
     
-    /*
-    let arrCountMarkedCellsNoNulls = arrCountMarkedCells.filter(element => !element.includes(null));
-    console.log('this work?', arrCountMarkedCellsNoNulls);
-
-    // This returns the index of the first item that meets the criteria 
-    let index = arrCountMarkedCells.findIndex(element => !element.includes(null));
-    console.log(index);
-    */
-
-    // Store the move in the array. Currently I am doing this and just hardcoding text, but I need to sub
-    // in what blocks are actually there 
+    // arrMove is triplets representing each move 'block1/2/3' are just holding values
     // so array = [1,3,'squareOne'],[0,3,'squareTwo'],[0,3,'squareTwo']]
+    // this should be the name of the block that is placed 
+    console.log('Array of Move = ', arrMove);    
 
+    // After the loop above has run and produce a number of arrays, I then process these to determine the best move (perhaps some other stuff)
 
     // If elements contains a 'null' return 'null'. Otherwise, take the last score from the move
     // This is why we need to work through every variation of the blocks 
@@ -181,22 +198,26 @@ function auto_BlockPlacerVirtual() { // I DIDN'T EVEN NEED TO PASSED virtualBoar
     });
     console.log('Array of countMarkedCellsSinglet = ', arrCountMarkedCellsSinglet);
 
-    let array = arrCountMarkedCellsSinglet.filter(Boolean);
+    // Use of .boolean removes 0's as well as nulls 
+    let array = arrCountMarkedCellsSinglet.filter(function (element) {
+        return element != null;
+      });
 
-    let forLoopMinMax = () => {
+
+    let forLoopMinMax = () => { // This is a new style function call. Revert? Or is this more readable? 
         let min = array[0]
-      
         for (let i = 1; i < array.length; i++) {
           let value = array[i]
           min = (value < min) ? value : min
         }
-      
         return [min]
       };
 
+    // For a 3x3 square this isn't returning zero
     let [arrCMCSmin] = forLoopMinMax()
     console.log('Minimum value = ', arrCMCSmin) 
 
+    // I really like this bit of coding!! Real breakthrough way of getting to arrays to 'interact'
     // Loop through array 1 and if it returns true (it is the smallest value),
     // then take the value of array 2 and push it to a new array 
 
@@ -210,6 +231,7 @@ function auto_BlockPlacerVirtual() { // I DIDN'T EVEN NEED TO PASSED virtualBoar
 
     console.log('the array with all the best moves is = ', bestMoveArray)
 
+    //document.getElementById('best-move').textContent = bestMoveArray[0]; // This looks shit not being formatted but can be done
 
 
 
@@ -226,10 +248,14 @@ function auto_ProcessBlockVirtual(rowIndex, colIndex, block, auto_virtualBoard) 
     // I pass 'block' just as a test currently from auto_BlockPlacerVirtual(), but I could pass the real thing... 
 
     //console.log('automaticProcessBlock= ', block);
+
     let col = colIndex; 
     let row = rowIndex;
     let checkFalse = []; // Used to determine if checkEmpty ever returns 'false' 
-    let brainBlock = blocks.squareOne;
+    let brainBlock = blocks[block]; //Had to use square bracked notation instead of dot notation
+
+    // We get past a block, don't hard code it... 
+    // should be doing something like, let brainBlock = blocks.block
 
     //console.log('col = ', col, 'row = ', row, block) 
 
@@ -353,7 +379,7 @@ export function initVirtualBoard() {
 // This gets called when selectBlockImage is clicked
 export function blockSelectedVirtual() { 
     let clickedBlock = this.className;
-    clickedBlockSelectorID = this.id;
+    let clickedBlockSelectorID = this.id; // strange that this isn't being used 
     brainBlock = blocks[clickedBlock]; // This is setting 'brainBlock' which gets passed to processBlockVirtual() 
 };
 
@@ -364,17 +390,14 @@ export function processBlockVirtual() {
 
     let clickedCellCol = parseInt(this.className.substring(3, 4)); // Note that we can't extend beyond a 10x10 square with this approach
     let clickedCellRow = parseInt(this.className.substring(8, 9));
-    
     let col = clickedCellCol // Sort out this descrepancy later 
     let row = clickedCellRow // Sort out this descrepancy later 
     let checkFalse = []; // Used to determine if checkEmpty ever returns 'false' 
     // maybe check block isn't undefined and then catch the error
-
     if (brainBlock == undefined) { 
         // alert('You need to choose a block'); // processBlock creates the alert, so I don't need to do it here 
         return;
     }
-
     // Check if the required cells are empty 
     for (var i = 0; i < brainBlock.length; i++) { 
         for (var j = 0; j < brainBlock[i].length; j++) {
@@ -386,8 +409,6 @@ export function processBlockVirtual() {
         row += 1
         col = col - brainBlock[0].length // This doesn't seem that eligant 
     }
-    
-
     // If the rquired cells are empty then set them 
     col = clickedCellCol; // Need to reset because of the above line - doesn't feel elegant 
     row = clickedCellRow;
@@ -398,7 +419,7 @@ export function processBlockVirtual() {
                 if (brainBlock[i][j] == 1) {
                     // This fails is there is offlay 
                     virtualBoard[row][col] = 1; // This sets the value of the array based on brainBlock
-                    clearVirtual(row, col);
+                    clearVirtual(row, col); // clear virtual just checks if cells should be cleared 
                 }
                 col += 1; 
             }
@@ -412,7 +433,7 @@ export function processBlockVirtual() {
     brainBlock = undefined; // When I import the block it becomes immutable! 
 
     return;
-};
+}
 
 
 function checkEmptyVirtual(checkRow, checkCol) {

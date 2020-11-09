@@ -118,36 +118,72 @@ I think this is probably a dumb way of doing things - we can just moved between 
 
 8. Finally got auto_ProcessBlockVirtual() working with the help of Andy B. The trick was to call all of the functions within the final loop of the next loop. It's easy when you know how. 
 
-Another thing I got stuck on was console logging the array - It kept just going to the last iteration all the way along. I wonder if this is perhaps something along the lines of 'assigned by value' vs 'assigned by position'. I used 
+Another thing I got stuck on was console logging the array - It kept just going to the last iteration all the way along. I wonder if this is perhaps something along the lines of 'assigned by value' vs 'assigned by position'. - I had a lot of trouble logging the array as it got processed. I finally cracked this by using JSON.stringify. I need to learn more about how arrays function in js. I think I was running in to trouble, as it was only processing/returning the final iteration of the array. Arrays are mutable? Something like this perhaps... need to research. 
 
-9. A bunch of new arrays got things going. 
+9. A bunch of new arrays got things going. I am able to determine the 'best move' ( = one with lowest score after placing all three blocks) by creating an array of all moves, an array of score (reducing the array of score down to sinlets (e.g. move is complete)) and then pulling out the lowest number from the array of score, by then looping through array of score and adding array of moves (at that index) to a new array 'bestMoveArray' I create an array of best moves
 
-*************************************************************************************************
-
-to do... 
-
-- Use brain.js to place the blocks on the virtual board - add details to the array regarding the count of the cells on the board
-- - I'm currently only placing a single square block - I need to be able to pull what the blocks are from the DOM and place these
-- - Or, should I work on the counting highest score, and pulling out relevant results first... I think this would be easier to do while using 'place single blocks' approach. 
-
-
-
-I need to convert array 1 (score), which I've created below, it to an array that only contains
-1 element for every 3 - This should be 'null' = that move didn't count, or X = the LAST score from that triplet - This is the score when all blocks are placed (we come to different orders of blocks later). 
-Yep, two arrays (one with moves), on with null or last score, THEN find the one with the lowest score 
-
-I'VE CREATED THE TWO ARRAYS. NOW I NEED TO FIGURE OUT HOW TO PULL OUT THE MOVES WITH THE LOWEST SCORE... 
-By storing an array of moves, I hope to be able to progressively iterate through them in stages, wittling them down to the best move. To begin with I will just take the 
+10. I managed to move from doing this with a test block to doing it with the actual blocks that a randomly generated in the blocks.js file, when the page loads, or 3 blocks have been placed  
 
 I've learned that - Math.min is a recursive function and crashes on large arrays 
 
 "Function calls are expensive, therefore with really big arrays a simple loop will perform much better than findIndex:"
 https://stackoverflow.com/questions/15997879/get-the-index-of-the-object-inside-an-array-matching-a-condition
 
+This meant I had to change my approach to finding the lowest value in the array. Figure it out though! 
 
-- I will need to display the 'answer' that the brain comes up with, after it has been determined
+*************************************************************************************************
 
-- I had a lot of trouble logging the array as it got processed. I finally cracked this by using JSON.stringify. I need to learn more about how arrays function in js. I think I was running in to trouble, as it was only processing/returning the final iteration of the array. Arrays are mutable? Something like this perhaps... need to research. 
+to do... 
+
+- Next I need to use brain.js to place the actual blocks on the virtual board - DONE!! 
+-- But now it seems to not be working even though I didn't do anything :(
+-- Actual I think I was just counting the rows/columns wrong 
+-- When figuring out where to place it's 'down' then 'right' and remember to add one to the number 
+
+- Then after that I need to figure out the 'live'/'shadow' situation, so I can actually progress in the game
+
+- I think I should also split this file into the next brain-0 version? Maybe? Could be interesting to keep... 
+
+ 
+
+^^^ I CAN ACTUALLY RETURN THE BEST MOVE - My code runs in about 8 seconds on 10x10! Will be longer when I do every combination! 
+
+I can. But, I can only run brain once, I'm not storing the state of the board using 'live'/'shadow', so after I run in once it thinks that the boards is empty again, I tried to resolve this 
+
+
+
+- I think I should be careful about when virtual boards are getting created - it happens on page load AND when I select virtual brain
+
+- What did I I mean by the above ^^^^ It seems like it does only get created on page load... 
+
+- I think another clue why it might not be working is the unexpected Overlay or Offlay I get when a block is placed that disappears 
+
+- Also think of difference between 'let' and 'var' 
+- But what is wierd is that console.log is correct? 
+
+- I have a way of having the virtual board effected by what I place on the html board. 
+- This is when I'm not doing 'auto' - This is what happens when I actually place the blocks on the board 
+- It's seems sometimes what 'virtualBoard' returns on the second step is correct and sometimes it isn't
+- When I place a bunch of blocks on the board and press 'start Brain' 'virtualBoard' returns the correct pattern 
+-- This is even the case when I add blocks that dissapear 
+-- However, while 'virtualBoard' contains the correct pattern after I place cells and run startBrain 'startBrain' acts like the board is empty 
+
+- If I press startBrain twice, 'virtualBoard' is logged as something mental the second time! Something is up with running the thing twice... 
+
+Remember 'virtualBoard' doesn't actually return anything, I am simply logging the state of the array when console.log runs (I think)
+
+- So by trying to let 'auto_virtualBoard' be replaced with 'virtualBoard' I want to be able to progress through the game
+
+
+Never use underscore in variable names - it makes them super difficult to search! 
+
+Now I need to figure out how to do this 'live'/'shadow' business 
+
+BUT I also need to be able to programatically place the blocks in every combination! I'm currently only doing it 1/2/3
+This is important because different combinations can open up different possibilities of lower scores, especially when the board has squares filled 
+
+- I can display the best move on the page but it looks messy at the moment (just choose the first 'answer')
+
 
 
 

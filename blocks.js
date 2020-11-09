@@ -17,11 +17,35 @@ function createVirtualBoard(boardSize) {
     for (let i = 0; i < boardSize; i++) { 
         for (let j = 0; j < boardSize; j++) { 
             virtualBoard[i][j] = 0; 
-        };
-    };
+        }
+    }
     return virtualBoard;
-};
+}
 
+// The purpose of this function is to create an array (virtual board) based on the html state 
+// This is need to know bourd size as well 
+// I DON'T THINK I ACTUALLY NEED THIS FUNCTION - I ALREADY UPDATE VIRTUALBOARD WHEN I PLACE THE 
+// BLOCKS ON THE SQUARES
+/*
+function pullVirtualBoard(boardSize) {
+
+    let virtualBoard = new Array(boardSize); 
+  
+    // Loop to create 2D array using 1D array 
+    for (let i = 0; i < virtualBoard.length; i++) { 
+        virtualBoard[i] = []; 
+    };      
+    // Loop to initilize 2D array elements. 
+    // Instead of initilizing the 2D array elements with '0' I should do it with what's on the board 
+    for (let i = 0; i < boardSize; i++) { 
+        for (let j = 0; j < boardSize; j++) { 
+            // if corresponding Element on html board is empty then 0, else X
+            virtualBoard[i][j] = 0; 
+        }
+    }
+    return virtualBoard;
+}
+*/
 
 function chooseRandomBlock() {
 
