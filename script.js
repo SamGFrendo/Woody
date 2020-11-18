@@ -5,7 +5,7 @@ import { /*countMarkedCells,*/ startBrain, processBlockVirtual, blockSelectedVir
 import { chooseRandomBlock, blocks } from './blocks.js'
 
 
-export let N_SIZE = 5; // I don't know why these are capitalised...? 
+export let N_SIZE = 6; // I don't know why these are capitalised...? 
 export let EMPTY = "&nbsp;"; // I don't know why these are capitalised...? 
 let boxes = [];
 let marker = "X"; // A lot runs based on innerHTML - so I should keep this

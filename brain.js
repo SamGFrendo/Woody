@@ -7,7 +7,8 @@ import {blocks, createVirtualBoard} from './blocks.js'
 
 
 let brainBlock; // Mirrors 'block' used in script.js
-let virtualBoard; // This get created by the init() function in script.js
+let virtualBoard; // init() function in script.js calls initVirtualBoard()
+// whose only purpose is to create and empty 2D array for virtualBoard
 let arrVirtualBoard = []; // Use for testing purposes, so I can what the virtual board actually looks like
 
 
@@ -39,6 +40,7 @@ export function startBrain() {
 
 // I need to automatically set brainBlock, so that I can use to iterate through...
 // Do this later when I have auto_BlockPlacerVirtual() working 
+// (I export this function but it's not being used, so I don't think I need to)
 export function auto_BlockSelectedVirtual() {
 
     let arrBlockSelected = [];
@@ -63,9 +65,7 @@ function countMarkedCellsVirtual(arr) { // The array received is the 2D virtualB
 };
 
 
-// Placing the cells, then calculating whether or not it was a good move, should also be separated out
-
-// Programatically places all of the block combinations 
+// I need to programatically places all of the block combinations 
 // Needs to to do 0,1,2 - 0,2,1 - 1,2,0 - 1,0,2 - 2,1,0 - 2,0,1
 // I can acheive the above with an array / object? 
 // I should remove the concept of 'can place' I should just iterate through all variations
@@ -84,7 +84,7 @@ function auto_BlockPlacerVirtual(arr) {
     let block2 = arrBlockSelected[1];
     let block3 = arrBlockSelected[2];
     console.log(block1, block2, block3); 
-
+    let auto_virtualBoard = [];
     // We pass auto_virtualBoard to all the functions... it is set to blank every time 'brain' is run
     // What I need to do is make it so that when I click 'start brain' I let auto_virtualBoard = the existing setup
     // I need a way of creating an array (like createVirtualBoard) which actually creates the array from the existing state in the html
@@ -93,14 +93,25 @@ function auto_BlockPlacerVirtual(arr) {
 
 
     ///let auto_virtualBoard = createVirtualBoard(N_SIZE);
-    let auto_virtualBoard = virtualBoard;
+
+    /**** This is where I'm trying to have the board which is calculated from
+     * be set to be equal to the board that is created by placing the blocks
+     * Something is going wrong - and when 
+     */
+
+    // Array is a 'reference type' - This means what I was happening is that there was only one virtualBoard with two things
+    // pointing to it 
+    // auto_virtualBoard = virtualBoard;
+
+    // Clone the object - = the values of the array... rather than 
+    auto_virtualBoard = virtualBoard.map(function(arr) {
+        return arr.slice();
+    });
+
     // auto_virtualBoard is being updated with virtualBoard... it is just wrong at this point
     console.log('Virtual board is', JSON.stringify(virtualBoard)); //'auto is ', JSON.stringify(auto_virtualBoard))
     // When I can visualise the virtual board I can see it is updating - but it seems to be updating
-    // Incorrectly - Maky it is correct, but then being ignored for some reason? 
-
-    // This doesn't work either - but it's weird because I don't see why not
-    // virtualBoard is an array representing the state of the board - it is returning nonsense when I run startBrain() twice 
+    // Incorrectly - Maby it is correct, but then being ignored for some reason? 
 
 
     let arrCountMarkedCells = [];
@@ -155,7 +166,10 @@ function auto_BlockPlacerVirtual(arr) {
 
                             // All three moves are made, then it is nuked. 
                             // This actually works fine
-                             auto_virtualBoard = createVirtualBoard(N_SIZE); 
+
+                            auto_virtualBoard = virtualBoard.map(function(arr) {
+                                return arr.slice();
+                            }); 
                             // Initial clear can just wipe, but in reality I want to go back to to 
                             // the virtual board in the previous state (E.g. live/Shadow)
                             
@@ -242,7 +256,7 @@ function auto_BlockPlacerVirtual(arr) {
 
 
 
-// This gets called by automaticBlockPlacerVirtual 
+// This gets called by autoBlockPlacerVirtual 
 // but brainBlock is undefined at this stage (because nothing has been clicked/set from script.js/DOM - I need to do this virtually)
 function auto_ProcessBlockVirtual(rowIndex, colIndex, block, auto_virtualBoard) {
     // I pass 'block' just as a test currently from auto_BlockPlacerVirtual(), but I could pass the real thing... 
@@ -352,7 +366,7 @@ function auto_clearVirtual(checkRow, checkCol, auto_virtualBoard) {
     };
 
     /*
-    We will want to create a virtual score - as well as the real score 
+    We will want to create a virtual score - as well as the real score (maybe)
     */
 };
 

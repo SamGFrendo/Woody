@@ -122,34 +122,31 @@ Another thing I got stuck on was console logging the array - It kept just going 
 
 9. A bunch of new arrays got things going. I am able to determine the 'best move' ( = one with lowest score after placing all three blocks) by creating an array of all moves, an array of score (reducing the array of score down to sinlets (e.g. move is complete)) and then pulling out the lowest number from the array of score, by then looping through array of score and adding array of moves (at that index) to a new array 'bestMoveArray' I create an array of best moves
 
-10. I managed to move from doing this with a test block to doing it with the actual blocks that a randomly generated in the blocks.js file, when the page loads, or 3 blocks have been placed  
+10. I managed to move from doing this with a test block to doing it with the actual blocks that are randomly generated in the blocks.js file, when the page loads. 
 
 I've learned that - Math.min is a recursive function and crashes on large arrays 
-
+and
 "Function calls are expensive, therefore with really big arrays a simple loop will perform much better than findIndex:"
 https://stackoverflow.com/questions/15997879/get-the-index-of-the-object-inside-an-array-matching-a-condition
 
-This meant I had to change my approach to finding the lowest value in the array. Figure it out though! 
+11. To find the best move I had some fun with arrays - basically I created one which stored all the moves, and another which stored the all the scores. I then found the lowest value from scores array and used that to iterate through scores array, but returned the move from the moves array - creating a new array of the best scores 
+
 
 *************************************************************************************************
 
 to do... 
 
-- Next I need to use brain.js to place the actual blocks on the virtual board - DONE!! 
--- But now it seems to not be working even though I didn't do anything :(
 -- Actual I think I was just counting the rows/columns wrong 
--- When figuring out where to place it's 'down' then 'right' and remember to add one to the number 
+-- When figuring out where to place a block, it's 'down' then 'right' and remember to add one to the number 
 
 - Then after that I need to figure out the 'live'/'shadow' situation, so I can actually progress in the game
 
 - I think I should also split this file into the next brain-0 version? Maybe? Could be interesting to keep... 
 
- 
-
 ^^^ I CAN ACTUALLY RETURN THE BEST MOVE - My code runs in about 8 seconds on 10x10! Will be longer when I do every combination! 
 
-I can. But, I can only run brain once, I'm not storing the state of the board using 'live'/'shadow', so after I run in once it thinks that the boards is empty again, I tried to resolve this 
-
+I can. But, I can only run brain once, I'm not storing the state of the board using 'live'/'shadow', so after I run in once it thinks that the boards is empty again, I tried to resolve this... 
+- So by trying to let 'auto_virtualBoard' be replaced with 'virtualBoard' I want to be able to progress through the game
 
 
 - I think I should be careful about when virtual boards are getting created - it happens on page load AND when I select virtual brain
@@ -168,11 +165,58 @@ I can. But, I can only run brain once, I'm not storing the state of the board us
 -- This is even the case when I add blocks that dissapear 
 -- However, while 'virtualBoard' contains the correct pattern after I place cells and run startBrain 'startBrain' acts like the board is empty 
 
-- If I press startBrain twice, 'virtualBoard' is logged as something mental the second time! Something is up with running the thing twice... 
+- If I press startBrain twice, 'virtualBoard' is logged as something incorrect the second time! Something is up with running the thing twice... 
+This makes sense perhaps? 
+Ah hah! I've got a clue in the trail! 
+When I press startBrain twice the second print of virtualBoard is simply the first block...
+Something is going wrong and things are iterating once to far
+... If I figure this out I may have continuous game play going 
+So... what happens when I call brain twice which means this happens
+- The plot thinkens... it seems, if the first block would dissapear, the second block is placed on VirtualBoard 
+- When I place some blocks and then hit startBrain, virtualBoard appears correct, but the calculations act like virtualBoard is empty 
+- I think the issue is I'm call function, which then call OTHER functions, which update virtualBoard
+- I should check the one that clears etc. I'M ALMOST CERTIAIN THIS IS WHAT IS HAPPENING - TWO STREAMS ARE OVERLAPPING - I'M USING THE SAME FUNCTION IN TWO SLIGHLY DIFFERENT STREAMS THAT SHOULDN'T OVERLAP - I JUST NEED TO CREATE A NEW FUNCTION FOR THESE 
+- More clues... When I run the brain three times, what virtualBoard is returning is the pattern of trying to place the 1st and the 2nd blocks, this is obviously different if blocks overlay, or dissapear, or can actually be placed... this is why it somehow seems a big random...
+
+I need to think about the state of things when startBrain finishes running... it appears to go once step to far down the blocks each time it is pressed... 
+
+virtualBoard gets called inside...
+processBlockVirtual() 
+checkEmptyVirtual()
+clearVirtual()
+
+processBlockVirtual() gets called by... 
+a cell being clicked 
+
+checkEmptyVirtual() get called by... 
+processBlockVirtual 
+
+clearVirtual() gets called by...
+processBlockVirtual 
+
+AND running the brain calls...
+auto_BlockSelectedVirtual()
+auto_BlockPlacerVirtual()
+
+AND
+auto_BlockPlacerVirtual() calls...
+auto_ProcessBlockVirtual()
+
+AND
+auto_ProcessBlackVirtual calls...
+auto_clearVirtual()
+auto_checkEmptyVirtual()
+
+NEW FLASH
+auto_virtualBoard gets reset to be blank INSIDE the 3xloop of auto_BlockPlacerVirtual()
+... auto_virtualBoard = createVirtualBoard(N_SIZE); 
+
+
+
 
 Remember 'virtualBoard' doesn't actually return anything, I am simply logging the state of the array when console.log runs (I think)
 
-- So by trying to let 'auto_virtualBoard' be replaced with 'virtualBoard' I want to be able to progress through the game
+
 
 
 Never use underscore in variable names - it makes them super difficult to search! 
