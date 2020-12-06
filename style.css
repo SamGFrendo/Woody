@@ -48,3 +48,8 @@ img {
     width: 90px;
     border-radius: 5px 5px 5px 5px;
 }
+
+/* Can I add images to my select element
+It looks like this is difficult to do without a JQuery plugin
+*/
+#select-first-block option[value="squareOne"]   { background-image:url(images/squareOne.png);   }

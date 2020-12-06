@@ -1,8 +1,11 @@
 
 "use strict";
 
+// brain-4.js goes with script-4js and is a working brain - it goes through all permutations and logs the best 
+// move from that permutation. 
+
 // importing block means it is immutable... should just move some functions across
-import {N_SIZE, clickedBlockSelectorID} from './script.js'
+import {N_SIZE} from './script.js'
 import {blocks, createVirtualBoard} from './blocks.js'
 
 
@@ -41,18 +44,26 @@ export function startBrain() {
 
 }
 
-// This function should recieve arrBlockSelected - This is an array of the Blocks in the DOM in the order 0,1,2
-// I should loop through calling the function auto_BlockPlacerVirtual();
 function blockRecombinator(arrRecombinator) {
-
-    var t0 = performance.now() // I think I will need to move this up to blockRecombinator()
-
+    // The idea of this function is to programatically places all of the block combinations 
+    // I need to 
+    // I need to do 0,1,2 - 0,2,1 - 1,2,0 - 1,0,2 - 2,1,0 - 2,0,1
+    // Can I acheive the above with an array / object? 
+    // This function should recieve arrBlockSelected - This is an array of the Blocks in the DOM in the order 0,1,2
+    // I should loop through calling the function auto_BlockPlacerVirtual();
+    // But before that I should just console.log each of the different arrays
+    // How best to re-order arrays? 
     let minimumScoreAcrossPermutations = [];
     let bestMoveAcrossPermutations = [];
-    for (let i = 0; i < 6; i++) { // This is an array of length 6 with each permutation, I iterate through these and pass them to auto_BlockPlacerVirtual();
+    // This is an array of length 6 with each permutation, I should iterate through these and 
+    // pass them to auto_BlockPlacerVirtual();
+    permutation(arrRecombinator); 
+    //console.log(permutation(arrRecombinator));
+    for (let i = 0; i < 6; i++) {
         permutation(arrRecombinator)[i];
         console.log('This is logged from blockRecombinator', permutation(arrRecombinator)[i]);
-        // auto_BlockPlacerVirtual is now returning the results to this function... rather than logging them there 
+        // This works, but auto_BlockPlacerVirtual now runs six times,
+        // What I want to do is produce the array here... and calculate the best more from here...
         let result = auto_BlockPlacerVirtual(permutation(arrRecombinator)[i]);
         
         // This is not defined, so even though I returning is, it is not defined in this function
@@ -61,17 +72,12 @@ function blockRecombinator(arrRecombinator) {
         bestMoveAcrossPermutations.push(result[1]);
 
     }
-
-    console.log('What I want to do is log the initial count of the board')
     // What I need to do is create two more arrays... one which is 6 and is the minimum score
     console.log('array of score across permutations = ', minimumScoreAcrossPermutations);
     console.log('array of moves that give low scores across permutations = ', bestMoveAcrossPermutations);
     // So, I think what I need to do is... return minimum values, plus arrays of best move? 
     // Then check which one is minimum, then return that array of best moves 
     // push the arrays together... like I do in the other function 
-
-    var t1 = performance.now() 
-    console.log('Run through blockRecombinator took ' + (t1 - t0) + ' milliseconds.') 
 
 }
 
@@ -121,35 +127,33 @@ function auto_BlockPlacerVirtual(arr) {
     // var t0 = performance.now() // I think I will need to move this up to blockRecombinator()
 
     let arrBlockSelected = arr; // Think I could just skip this step by renmaing parameter 
-    console.log('This is logged from auto_BlockPlacerVirtual ', arrBlockSelected); // This is logged the same as below
+    console.log('This is logged from auto_BlockPlacerVirtual ', arrBlockSelected);
     let block1 = arrBlockSelected[0];
     let block2 = arrBlockSelected[1];
     let block3 = arrBlockSelected[2];
-    console.log(block1, block2, block3); // This is logging the same as above 
+    console.log(block1, block2, block3); 
     let auto_virtualBoard = [];
     
+    // What I need to do is make it so that when I click 'start brain' I let auto_virtualBoard = the existing setup
 
-    // What I needed to do was 'Clone' the object. This assigns the values of the array... rather than the reference
+    /**** This is where I'm trying to have the board which is calculated from
+     * be set to be equal to the board that is created by placing the blocks
+     * Something is going wrong - and when 
+     */
+
+    // Array is a 'reference type' - This means wha was happening is that there was only one virtualBoard with two references
+    // pointing to it... (using the approach commented out below)
+    // auto_virtualBoard = virtualBoard;
+
+    // What I needed to do was 'Clone' the object = assign the values of the array... rather than the reference
     auto_virtualBoard = virtualBoard.map(function(arr) {
         return arr.slice();
     });
 
     console.log('Virtual board is', JSON.stringify(virtualBoard)); //'auto is ', JSON.stringify(auto_virtualBoard))
-    
-    
-    
-    // I will log the board here, but I really want to log it in the function that calls this function, so it only gets
-    // called once
-    // Interestingly what I want is a 'theoritical maximum' which is count of the board + the size of the blocks
-    // Can I use countMarkedCellsVirtual on the blocks
-    let countOfBlock1 = countMarkedCellsVirtual(blocks[block1]); //Get the actual array from the object
-    let countOfBlock2 = countMarkedCellsVirtual(blocks[block2]);
-    let countOfBlock3 = countMarkedCellsVirtual(blocks[block3]);
-    console.log('Theoretical block maximum = ', countOfBlock1 + countOfBlock2 +countOfBlock3);
-    let countOfVirtualBoard = countMarkedCellsVirtual(virtualBoard);
-    console.log('Theoretical board maximum = ',countOfVirtualBoard + countOfBlock1 + countOfBlock2 +countOfBlock3);
 
-    // I should probably move these up with the other variable declarations 
+
+
     let arrCountMarkedCells = [];
     let arrCountMarkedCellsTriplet = [];
     let arrMove = [];
@@ -407,6 +411,15 @@ function auto_clearVirtual(checkRow, checkCol, auto_virtualBoard) {
 
 
 
+
+
+
+
+
+
+
+
+
 //************ From this point down we're simply replicating the html board on the virtual board ***************/
 //************************************************************************************************************ */
 
@@ -469,18 +482,9 @@ export function processBlockVirtual() {
         console.log('Overlay or Offlay detected in brain.js');
         return;
     }
+    brainBlock = undefined; // When I import the block it becomes immutable! 
 
-    // This was my original approach 
-    // brainBlock = undefined; 
-
-    // This logic is to try to make sure virtualBoard stays synced with the real board 
-    // Brain block does not know what this is 
-    if (clickedBlockSelectorID === 'selector-box-single') {
-        return;
-    } else {
-        brainBlock = undefined; // When I import the block it becomes immutable! 
-        return;    
-    }
+    return;
 }
 
 
@@ -523,6 +527,6 @@ function clearVirtual(checkRow, checkCol) {
         };
     };
     /*
-    We will want to creatte a virtual score - as well as the real score 
+    We will want to craete a virtual score - as well as the real score 
     */
 };

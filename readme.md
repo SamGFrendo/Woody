@@ -106,138 +106,83 @@ Clearly this is way better - but we're not placing blocks yet - and we're not ca
 - processBlockVirtual() - Is working! - it didn't need a setVirtual as it can be done within the function 
 
 7. clearVirtual() function created - allows rows and cols to be cleared on the virtual board. If I add this to the automaticBlockPlacerVirtual how much does it slow things down? 
-5x5=0.135s
-6x6=0.100s 
-7x7=0.132s
-8x8=0.318s
-9x9=0.612s
-10x10=1.609s
+- 5x5=0.135s
+- 6x6=0.100s 
+- 7x7=0.132s
+- 8x8=0.318s
+- 9x9=0.612s
+- 10x10=1.609s
 We can see that it does start to negatively impact the speed at which we can iterate through the different combinations. I don't think we need to start to worry just yet - but as we add more and more function I could see this getter very slow. 
 
 I think this is probably a dumb way of doing things - we can just moved between a live and shadow board... resetting to the previous state in this way
 
 8. Finally got auto_ProcessBlockVirtual() working with the help of Andy B. The trick was to call all of the functions within the final loop of the next loop. It's easy when you know how. 
 
-Another thing I got stuck on was console logging the array - It kept just going to the last iteration all the way along. I wonder if this is perhaps something along the lines of 'assigned by value' vs 'assigned by position'. - I had a lot of trouble logging the array as it got processed. I finally cracked this by using JSON.stringify. I need to learn more about how arrays function in js. I think I was running in to trouble, as it was only processing/returning the final iteration of the array. Arrays are mutable? Something like this perhaps... need to research. 
+Another thing I got stuck on was console logging the array - It kept just going to the last iteration all the way along. I wonder if this is perhaps something along the lines of 'assigned by value' vs 'assigned by position'. - I had a lot of trouble logging the array as it got processed. I finally cracked this by using JSON.stringify. I need to learn more about how arrays function in js. I think I was running into trouble, as it was only processing/returning the final iteration of the array. Arrays are mutable? Something like this perhaps... need to research. 
 
-9. A bunch of new arrays got things going. I am able to determine the 'best move' ( = one with lowest score after placing all three blocks) by creating an array of all moves, an array of score (reducing the array of score down to sinlets (e.g. move is complete)) and then pulling out the lowest number from the array of score, by then looping through array of score and adding array of moves (at that index) to a new array 'bestMoveArray' I create an array of best moves
+9. A bunch of new arrays got things going. I am able to determine the 'best move' ( = one with lowest score after placing all three blocks) by creating an array of all moves, an array of score (reducing the array of score down to sinlets (e.g. move is complete)) and then pulling out the lowest number from the array of score, by then looping through array of score and adding array of moves (at that index) to a new array 'bestMoveArray' I create an array of best moves. 
 
 10. I managed to move from doing this with a test block to doing it with the actual blocks that are randomly generated in the blocks.js file, when the page loads. 
 
 I've learned that - Math.min is a recursive function and crashes on large arrays 
-and
+...and... 
 "Function calls are expensive, therefore with really big arrays a simple loop will perform much better than findIndex:"
 https://stackoverflow.com/questions/15997879/get-the-index-of-the-object-inside-an-array-matching-a-condition
 
 11. To find the best move I had some fun with arrays - basically I created one which stored all the moves, and another which stored the all the scores. I then found the lowest value from scores array and used that to iterate through scores array, but returned the move from the moves array - creating a new array of the best scores 
 
+12. The problem I had was I couldn't progress through the game. When I tried to reset the auto_virtualBoard based on the virtualBoard, it would work once but then would start breaking down. Having spoken to Andy B the mistake I discovered I was making was I was assigning the arrays to each other wrong. Arryas are a 'reference type', meaning the variable is a reference to the data, not the the data itself (value type). I what I needed to do was 'clone' the array, essentially make a whole new copy of the data that THEN could be used to update auto_virtualBoard.
+
+ *  This is what I was trying to do --->   // auto_virtualBoard = virtualBoard;
+
+The issues is this is now about 3 times slower on the 10x10 board. So it's increased from about 8 seconds to longer. 
+
+Now that it works (with 1/2/3 order) the time to runs is... 
+- 5x5=0.204s
+- 6x6=0.568s 
+- 7x7=1.015s
+- 8x8=1.317s
+- 9x9=2.393s
+- 10x10=7.039s
+
+This is still acceptable I think. It will be 6 times this length of time = 42 seconds. I think that's ok, if I can play half the game on my own 
+
+13. I was able to iterate through all combinations. This involved the addition of a simple function (copied straight from stackoverflow - haven't figured out how it works yet), as well as moving up where I did the calculation regarding which was the best move. I will be able to do the same thing I did before to return the set of best moves... but for now I just log them all and can play the best move.
+
+Now that I can iterate through all combinations the time to run is... 
+- 5x5=0.691s
+- 6x6=1.095s 
+- 7x7=2.364s
+- 8x8=5.338s
+- 9x9=10.741s
+- 10x10=21.451s
+
+This is SLOW! But, short of doing some complex work to improve the efficiency of iteration through all combinations, I'm going to have to live with this. 
+
+14. I got it finished by chucking in a block selector + a block that is always squareOne. I also return a count of the virtualBoard when I click start brain, so I can easily tell if the brain has actually come up with anything good 
 
 *************************************************************************************************
 
+
 to do... 
 
--- Actual I think I was just counting the rows/columns wrong 
 -- When figuring out where to place a block, it's 'down' then 'right' and remember to add one to the number 
-
-- Then after that I need to figure out the 'live'/'shadow' situation, so I can actually progress in the game
-
-- I think I should also split this file into the next brain-0 version? Maybe? Could be interesting to keep... 
-
-^^^ I CAN ACTUALLY RETURN THE BEST MOVE - My code runs in about 8 seconds on 10x10! Will be longer when I do every combination! 
-
-I can. But, I can only run brain once, I'm not storing the state of the board using 'live'/'shadow', so after I run in once it thinks that the boards is empty again, I tried to resolve this... 
-- So by trying to let 'auto_virtualBoard' be replaced with 'virtualBoard' I want to be able to progress through the game
+-- I can display the best move on the page but it looks messy at the moment (just choose the first 'answer')
 
 
-- I think I should be careful about when virtual boards are getting created - it happens on page load AND when I select virtual brain
+A good efficiency saving I could think about doing in future is only passing unique combinations down to the 'auto' functions 
 
-- What did I I mean by the above ^^^^ It seems like it does only get created on page load... 
 
-- I think another clue why it might not be working is the unexpected Overlay or Offlay I get when a block is placed that disappears 
+I GOT IT WORKING! 
 
-- Also think of difference between 'let' and 'var' 
-- But what is wierd is that console.log is correct? 
+THIS IS THE NEXT CHALLENGE... 
 
-- I have a way of having the virtual board effected by what I place on the html board. 
-- This is when I'm not doing 'auto' - This is what happens when I actually place the blocks on the board 
-- It's seems sometimes what 'virtualBoard' returns on the second step is correct and sometimes it isn't
-- When I place a bunch of blocks on the board and press 'start Brain' 'virtualBoard' returns the correct pattern 
--- This is even the case when I add blocks that dissapear 
--- However, while 'virtualBoard' contains the correct pattern after I place cells and run startBrain 'startBrain' acts like the board is empty 
-
-- If I press startBrain twice, 'virtualBoard' is logged as something incorrect the second time! Something is up with running the thing twice... 
-This makes sense perhaps? 
-Ah hah! I've got a clue in the trail! 
-When I press startBrain twice the second print of virtualBoard is simply the first block...
-Something is going wrong and things are iterating once to far
-... If I figure this out I may have continuous game play going 
-So... what happens when I call brain twice which means this happens
-- The plot thinkens... it seems, if the first block would dissapear, the second block is placed on VirtualBoard 
-- When I place some blocks and then hit startBrain, virtualBoard appears correct, but the calculations act like virtualBoard is empty 
-- I think the issue is I'm call function, which then call OTHER functions, which update virtualBoard
-- I should check the one that clears etc. I'M ALMOST CERTIAIN THIS IS WHAT IS HAPPENING - TWO STREAMS ARE OVERLAPPING - I'M USING THE SAME FUNCTION IN TWO SLIGHLY DIFFERENT STREAMS THAT SHOULDN'T OVERLAP - I JUST NEED TO CREATE A NEW FUNCTION FOR THESE 
-- More clues... When I run the brain three times, what virtualBoard is returning is the pattern of trying to place the 1st and the 2nd blocks, this is obviously different if blocks overlay, or dissapear, or can actually be placed... this is why it somehow seems a big random...
-
-I need to think about the state of things when startBrain finishes running... it appears to go once step to far down the blocks each time it is pressed... 
-
-virtualBoard gets called inside...
-processBlockVirtual() 
-checkEmptyVirtual()
-clearVirtual()
-
-processBlockVirtual() gets called by... 
-a cell being clicked 
-
-checkEmptyVirtual() get called by... 
-processBlockVirtual 
-
-clearVirtual() gets called by...
-processBlockVirtual 
-
-AND running the brain calls...
-auto_BlockSelectedVirtual()
-auto_BlockPlacerVirtual()
-
-AND
-auto_BlockPlacerVirtual() calls...
-auto_ProcessBlockVirtual()
-
-AND
-auto_ProcessBlackVirtual calls...
-auto_clearVirtual()
-auto_checkEmptyVirtual()
-
-NEW FLASH
-auto_virtualBoard gets reset to be blank INSIDE the 3xloop of auto_BlockPlacerVirtual()
-... auto_virtualBoard = createVirtualBoard(N_SIZE); 
+I want to add an image to the dropdown, but it looks like this is not possible without using a JQuery plugin
 
 
 
 
-Remember 'virtualBoard' doesn't actually return anything, I am simply logging the state of the array when console.log runs (I think)
-
-
-
-
-Never use underscore in variable names - it makes them super difficult to search! 
-
-Now I need to figure out how to do this 'live'/'shadow' business 
-
-BUT I also need to be able to programatically place the blocks in every combination! I'm currently only doing it 1/2/3
-This is important because different combinations can open up different possibilities of lower scores, especially when the board has squares filled 
-
-- I can display the best move on the page but it looks messy at the moment (just choose the first 'answer')
-
-
-
-
-
-
-
-Adding the count of marked cells to an array seems to be very quick when I do it virtually 
-
-
-I should also look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
+I should look at changing how I build the array to be more efficient - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set 
 
 You can also speed up for loop: allocate array with 1M elements and in for loop assign values.
 https://dev.to/henryjw/array-map-much-slower-than-for-loop-57if
@@ -248,7 +193,7 @@ https://dev.to/henryjw/array-map-much-slower-than-for-loop-57if
 
 1. I should add function descriptions to all of the functions
 
-2. I should replace var with let - check i can do this with no problem 
+2. I should replace var with let - check I can do this with no problem (I should remind myself the difference. Somthign to do with scope I believe)
 
 3. I should make it so that clear() results in a fadeout of cells rather than dissapearing... this might be tricky 
 

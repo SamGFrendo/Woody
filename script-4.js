@@ -5,13 +5,13 @@ import { /*countMarkedCells,*/ startBrain, processBlockVirtual, blockSelectedVir
 import { chooseRandomBlock, blocks } from './blocks.js'
 
 
-export let N_SIZE = 10; // I don't know why these are capitalised...? 
+export let N_SIZE = 5; // I don't know why these are capitalised...? 
 export let EMPTY = "&nbsp;"; // I don't know why these are capitalised...? 
 let boxes = [];
 let marker = "X"; // A lot runs based on innerHTML - so I should keep this
 let score; // 'score' set in startNewGame() - Not sure if this is the best approach?
 
-export let clickedBlockSelectorID;
+let clickedBlockSelectorID;
 let block;
 let reset = 0;
 
@@ -41,22 +41,13 @@ function init() {
         }
     }
     document.getElementById('tictactoe').appendChild(board);
-    // DRY! I just whacked this in... I should tidy this up 
-    document.getElementById('select-first-block').addEventListener('change', changeFirstBlock);
-    document.getElementById('select-second-block').addEventListener('change', changeSecondBlock);
-    document.getElementById('select-third-block').addEventListener('change', changeThirdBlock);
-    // *****
     startNewGame();
     buildBlockSelector();
     initVirtualBoard();
     // This allows us to access the functions in 'brain' by clicking 'start Brain' 
     document.getElementById('start-brain').addEventListener('click', startBrain);
 
-    // I just want to put a static single block at the bottom, to set the pattern 
-    addSingleBlock();
-
 }
-
 
 //************** Sets the 'start' state of the initiliased board
 
@@ -81,25 +72,9 @@ function buildBlockSelector() {
         selectBlockImage.id = 'selector-box-' + i;
         selectBlockImage.addEventListener('click', blockSelected);
         selectBlockImage.addEventListener('click', blockSelectedVirtual);
-    }
-}
 
-// It is processBlock() which resets this to null / blank image
-function addSingleBlock() {
-    let selectBlockImage = document.createElement('img');
-    let specificBlock = 'squareOne';
-
-    document.getElementById('single-block').appendChild(selectBlockImage)
-    selectBlockImage.src = `./images/${specificBlock}.png`;
-    selectBlockImage.className = specificBlock; //className is used to control 
-    selectBlockImage.id = 'selector-box-single';
-    selectBlockImage.addEventListener('click', blockSelected);
-    selectBlockImage.addEventListener('click', blockSelectedVirtual);
-
-}
-
-
-
+    };
+};
 
 // Detects with block has been selected
 function blockSelected() {
@@ -227,80 +202,13 @@ function processBlock() {
         console.log('Overlay or Offlay detected in script.js');
         return;
     }
+    block = undefined; // Once the block has been set, you need to choose another block 
+    document.getElementById(clickedBlockSelectorID).className = null // but you can't choose any that have been set
+    document.getElementById(clickedBlockSelectorID).src = '/images/Blank.png'
 
-    // Moving this inside, means I don't have to click the single block again,
-    // But when I don't click the single block again it doesn't update viritual board 
-
-    // I just had to put this bit of logic in to stop resetting the 'single block' 
-    if (clickedBlockSelectorID === 'selector-box-single') {
-        return;
-    } else {
-        block = undefined; // Once the block has been set, you need to choose another block 
-        document.getElementById(clickedBlockSelectorID).className = null // but you can't choose any that have been set
-        document.getElementById(clickedBlockSelectorID).src = '/images/Blank.png'   
-        //countMarkedCells();
-        reset += 1;
-        return;    
-    }
-
-
-
+    //countMarkedCells();
+    reset += 1;
+    return;
 }
 
 init();
-
-//************** set blocks based on select elements ************* 
-
-function changeFirstBlock(){
-    // let blockChosen = document.getElementById('select-first-block').value;
-    // document.getElementById('single-block').innerHTML=(blockChosen);
-    let selectBlockImage = document.createElement('img');
-    // specificBlock is being replaced with the select element option, instead of random
-    let specificBlock = document.getElementById('select-first-block').value;
-    // I think insteady of appending child I need to delete and updatedate the node 
-    // parentNode.replaceChild(newChild, oldChild);
-    // child.replaceWith(span);
-    // document.getElementById('block-selector').appendChild(selectBlockImage)
-    document.getElementById('selector-box-0').replaceWith(selectBlockImage);
-    selectBlockImage.src = `./images/${specificBlock}.png`;
-    selectBlockImage.className = specificBlock; //className is used to control 
-    selectBlockImage.id = 'selector-box-0';
-    selectBlockImage.addEventListener('click', blockSelected);
-    selectBlockImage.addEventListener('click', blockSelectedVirtual);
-}
-
-function changeSecondBlock(){
-    // let blockChosen = document.getElementById('select-first-block').value;
-    // document.getElementById('single-block').innerHTML=(blockChosen);
-    let selectBlockImage = document.createElement('img');
-    // specificBlock is being replaced with the select element option, instead of random
-    let specificBlock = document.getElementById('select-second-block').value;
-    // I think insteady of appending child I need to delete and updatedate the node 
-    // parentNode.replaceChild(newChild, oldChild);
-    // child.replaceWith(span);
-    // document.getElementById('block-selector').appendChild(selectBlockImage)
-    document.getElementById('selector-box-1').replaceWith(selectBlockImage);
-    selectBlockImage.src = `./images/${specificBlock}.png`;
-    selectBlockImage.className = specificBlock; //className is used to control 
-    selectBlockImage.id = 'selector-box-1';
-    selectBlockImage.addEventListener('click', blockSelected);
-    selectBlockImage.addEventListener('click', blockSelectedVirtual);
-}
-
-function changeThirdBlock(){
-    // let blockChosen = document.getElementById('select-first-block').value;
-    // document.getElementById('single-block').innerHTML=(blockChosen);
-    let selectBlockImage = document.createElement('img');
-    // specificBlock is being replaced with the select element option, instead of random
-    let specificBlock = document.getElementById('select-third-block').value;
-    // I think insteady of appending child I need to delete and updatedate the node 
-    // parentNode.replaceChild(newChild, oldChild);
-    // child.replaceWith(span);
-    // document.getElementById('block-selector').appendChild(selectBlockImage)
-    document.getElementById('selector-box-2').replaceWith(selectBlockImage);
-    selectBlockImage.src = `./images/${specificBlock}.png`;
-    selectBlockImage.className = specificBlock; //className is used to control 
-    selectBlockImage.id = 'selector-box-2';
-    selectBlockImage.addEventListener('click', blockSelected);
-    selectBlockImage.addEventListener('click', blockSelectedVirtual);
-}
